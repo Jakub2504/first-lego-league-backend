@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class CompetitionTable {
 	private List<Match> matches = new ArrayList<>();
 
 	@OneToMany(mappedBy = "supervisesTable")
+	@Size(min = 2, max = 3, message = "A table must have between 2 and 3 referees")
 	private List<Referee> referees = new ArrayList<>();
 
 	public CompetitionTable() {}
