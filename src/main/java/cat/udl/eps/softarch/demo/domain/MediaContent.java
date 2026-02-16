@@ -1,0 +1,27 @@
+package cat.udl.eps.softarch.demo.domain;
+
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Entity
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class MediaContent {
+
+    @Id
+    @NotBlank
+    private String url;
+
+    @NotBlank
+    private String type;
+
+    @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    private Edition edition;
+
+}
