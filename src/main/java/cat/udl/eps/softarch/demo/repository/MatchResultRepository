@@ -1,0 +1,16 @@
+package repository;
+
+import domain.MatchResult;
+import java.util.List;
+import java.util.Optional;
+
+public interface MatchResultRepository {
+
+    MatchResult save(MatchResult matchResult);
+
+    Optional<MatchResult> findById(Integer id);
+
+    List<MatchResult> findAll();
+
+    void deleteById(Integer id);
+}
