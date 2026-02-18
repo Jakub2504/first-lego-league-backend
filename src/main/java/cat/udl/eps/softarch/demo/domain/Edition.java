@@ -12,8 +12,8 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class Edition {
+@EqualsAndHashCode(callSuper = true)
+public class Edition extends UriEntity<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
