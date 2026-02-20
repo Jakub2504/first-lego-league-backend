@@ -26,3 +26,19 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 ## Entities Model
 
 ![Entities Model](docs/design-diagram.png)
+
+## Get the Spring Boot app running and tested with these commands:
+
+Build the project
+```bash
+mvn package
+```
+Run the app locally
+```bash
+mvn spring-boot:run
+```
+Run tests
+```bash
+mvn test
+```
+
