@@ -15,5 +15,5 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AwardId implements Serializable { 
 	private String name;
-    private Long edition;
+	private Long edition;
 }
