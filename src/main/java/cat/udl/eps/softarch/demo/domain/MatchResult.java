@@ -1,11 +1,12 @@
 package cat.udl.eps.softarch.demo.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 
 /**
  * This entity links a team to a match and records the score obtained.
