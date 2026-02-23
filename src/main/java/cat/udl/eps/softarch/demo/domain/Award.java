@@ -43,15 +43,4 @@ public class Award extends UriEntity<AwardId> {
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
     private Team winner;
-
-    /**
-     * Required by UriEntity/Persistable to return the composite ID.
-     */
-    @Override
-    public AwardId getId() {
-        if (this.name == null || this.edition == null) {
-            return null;
-        }
-        return new AwardId(this.name, this.edition.getId());
-    }
 }
