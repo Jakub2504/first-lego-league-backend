@@ -24,16 +24,12 @@ public class Award extends UriEntity<AwardId> {
     @NotBlank
     private String name;
 
-    /**
-     * The edition this award belongs to.
-     * Must be a non-null value.
-     * Serialized as a URI reference to avoid infinite recursion.
-     */
-    //@Id
-    //@ManyToOne
-    //@JoinColumn(name = "edition_id")
-    //@JsonIdentityReference(alwaysAsId = true)
-    //private Edition edition;
+    // COMENTAT TEMPORALMENT FINS QUE ELS COMPANYS ACABIN LA CLASSE EDITION
+    // @Id
+    // @ManyToOne
+    // @JoinColumn(name = "edition_id")
+    // @JsonIdentityReference(alwaysAsId = true)
+    // private Edition edition;
 
     /**
      * The team that won this award.
@@ -43,4 +39,13 @@ public class Award extends UriEntity<AwardId> {
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
     private Team winner;
+
+    /**
+     * Implementació manual i TEMPORAL del mètode getId() requerit per Persistable.
+     * Retorna l'AwardId només amb el nom.
+     */
+    @Override
+    public AwardId getId() {
+        return new AwardId(this.name, null);
+    }
 }
