@@ -11,12 +11,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Match Results", description = "Repository for managing match scores and results")
 @RepositoryRestResource 
 public interface MatchResultRepository extends JpaRepository<MatchResult, Long> {
-
-    /*@Operation(summary = "Find results by match", 
+/*
+    @Operation(summary = "Find results by match", 
               description = "Returns a list of results associated with a specific match.")
     List<MatchResult> findByMatch(@Param("match") Match match);
 
     @Operation(summary = "Find results by team", 
                description = "Returns a list of results achieved by a specific team.")
-    List<MatchResult> findByTeam(@Param("team") Team team);*/
+    List<MatchResult> findByTeam(@Param("team") Team team);
+*/
 }

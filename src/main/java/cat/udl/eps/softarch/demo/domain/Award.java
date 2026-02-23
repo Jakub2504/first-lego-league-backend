@@ -23,19 +23,23 @@ public class Award extends UriEntity<String> {
     @NotBlank
     private String name;
 
-    /* @ManyToOne
+    /* 
+	@ManyToOne
     @JoinColumn(name = "edition_id")
 	@JsonIdentityReference(alwaysAsId = true)
     private Edition edition;
+	*/
 
     /**
      * The team that won this award.
      * Must be a non-null value.
      * Serialized as a URI reference to avoid infinite recursion.
      */
-    /*@ManyToOne
+    /*
+	@ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
-    private Team winner;*/
+    private Team winner;
+	*/
 
 
     @Override

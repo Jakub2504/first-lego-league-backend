@@ -12,12 +12,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Awards", description = "Repository for managing awards and prizes")
 @RepositoryRestResource
 public interface AwardRepository extends JpaRepository<Award, String> {
-
-    /* @Operation(summary = "Find awards by edition", 
+/*
+	@Operation(summary = "Find awards by edition", 
                description = "Returns all awards presented in a specific edition.")
     List<Award> findByEdition(@Param("edition") Edition edition);
 
     @Operation(summary = "Find awards by winner", 
                description = "Returns all awards won by a specific team.")
-    List<Award> findByWinner(@Param("winner") Team winner);*/
+    List<Award> findByWinner(@Param("winner") Team winner);
+*/
 }
