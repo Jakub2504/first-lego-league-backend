@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @Data 
 @NoArgsConstructor
 @AllArgsConstructor
-public class AwardId implements Serializable { 
+public class AwardId implements Serializable {
 	private String name;
 	private Long edition;
 }
