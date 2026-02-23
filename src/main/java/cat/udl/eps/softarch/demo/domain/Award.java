@@ -1,10 +1,12 @@
 package cat.udl.eps.softarch.demo.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 
 /**
  * This entity represents an award given to a team in a specific edition.
@@ -23,19 +25,19 @@ public class Award extends UriEntity<String> {
     @NotBlank
     private String name;
 
-    // @ManyToOne
-    // @JoinColumn(name = "edition_id")
-    // @JsonIdentityReference(alwaysAsId = true)
-    // private Edition edition;
+    /* @ManyToOne
+    @JoinColumn(name = "edition_id")
+	@JsonIdentityReference(alwaysAsId = true)
+    private Edition edition;
 
     /**
      * The team that won this award.
      * Must be a non-null value.
      * Serialized as a URI reference to avoid infinite recursion.
      */
-    //@ManyToOne
-    //@JsonIdentityReference(alwaysAsId = true)
-    //private Team winner;
+    /*@ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    private Team winner;*/
 
 
     @Override
