@@ -21,7 +21,7 @@ public interface MatchResultRepository extends JpaRepository<MatchResult, Long> 
     //           description = "Returns a list of results associated with a specific match.")
     //List<MatchResult> findByMatch(@Param("match") Match match);
 
-    @Operation(summary = "Find results by team", 
-               description = "Returns a list of results achieved by a specific team.")
-    List<MatchResult> findByTeam(@Param("team") Team team);
+    //@Operation(summary = "Find results by team", 
+    //           description = "Returns a list of results achieved by a specific team.")
+    //List<MatchResult> findByTeam(@Param("team") Team team);
 }

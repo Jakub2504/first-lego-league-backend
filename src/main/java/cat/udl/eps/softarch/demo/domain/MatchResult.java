@@ -39,8 +39,8 @@ public class MatchResult extends UriEntity<Long> {
      * The team that achieved this result.
      * Serialized as a URI reference to avoid infinite recursion.
      */
-    @NotNull
-    @ManyToOne
-	@JsonIdentityReference(alwaysAsId = true)
-    private Team team;
+    //@NotNull
+    //@ManyToOne
+	//@JsonIdentityReference(alwaysAsId = true)
+    //private Team team;
 }

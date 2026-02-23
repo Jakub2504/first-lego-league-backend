@@ -19,13 +19,7 @@ public class AwardAndMatchStepDefs {
 
     @Given("^The dependencies exist$")
     public void theDependenciesExist() throws Throwable {
-        var edReq = post("/editions").contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"2024\"}").with(AuthenticationStepDefs.authenticate());
-        var edRes = stepDefs.mockMvc.perform(edReq).andReturn().getResponse();
-        if (edRes.getStatus() == 201) editionUri = edRes.getHeader("Location");
-
-        var teamReq = post("/teams").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"Test Team\"}").with(AuthenticationStepDefs.authenticate());
-        var teamRes = stepDefs.mockMvc.perform(teamReq).andReturn().getResponse();
-        if (teamRes.getStatus() == 201) teamUri = teamRes.getHeader("Location");
+        
     }
 
     @When("^I request the match results list$")
@@ -48,17 +42,17 @@ public class AwardAndMatchStepDefs {
         stepDefs.result = stepDefs.mockMvc.perform(request);
     }
 
-    @When("^I create an award with name \"([^\"]*)\"$")
+	@When("^I create an award with name \"([^\"]*)\"$")
     public void iCreateAnAwardWithName(String name) throws Throwable {
-        String payload = "{\"name\": \"" + name + "\", \"edition\": \"" + editionUri + "\", \"winner\": \"" + teamUri + "\"}";
+        String payload = "{\"name\": \"" + name + "\", \"winner\": \"" + teamUri + "\"}";
         var request = post("/awards").contentType(MediaType.APPLICATION_JSON).content(payload)
                 .characterEncoding(StandardCharsets.UTF_8).accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
         stepDefs.result = stepDefs.mockMvc.perform(request);
     }
 
-    @When("^I create an award with no name$")
+	@When("^I create an award with no name$")
     public void iCreateAnAwardWithNoName() throws Throwable {
-        String payload = "{\"edition\": \"" + editionUri + "\", \"winner\": \"" + teamUri + "\"}";
+        String payload = "{\"winner\": \"" + teamUri + "\"}";
         var request = post("/awards").contentType(MediaType.APPLICATION_JSON).content(payload)
                 .characterEncoding(StandardCharsets.UTF_8).accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
         stepDefs.result = stepDefs.mockMvc.perform(request);
