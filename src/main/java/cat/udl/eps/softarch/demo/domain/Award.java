@@ -15,31 +15,31 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Award extends UriEntity<String> {
 
-    /**
-     * The name of the award.
-     * Must be a non-blank string.
-     */
+/**
+ * The name of the award.
+ * Must be a non-blank string.
+ */
     @Id
     @NotBlank
     private String name;
 
-    /* 
-	@ManyToOne
-    @JoinColumn(name = "edition_id")
-	@JsonIdentityReference(alwaysAsId = true)
-    private Edition edition;
-	*/
+/* 
+@ManyToOne
+@JoinColumn(name = "edition_id")
+@JsonIdentityReference(alwaysAsId = true)
+private Edition edition;
+*/
 
-    /**
-     * The team that won this award.
-     * Must be a non-null value.
-     * Serialized as a URI reference to avoid infinite recursion.
-     */
-    /*
-	@ManyToOne
-    @JsonIdentityReference(alwaysAsId = true)
-    private Team winner;
-	*/
+/**
+ * The team that won this award.
+ * Must be a non-null value.
+ * Serialized as a URI reference to avoid infinite recursion.
+ */
+/*
+@ManyToOne
+@JsonIdentityReference(alwaysAsId = true)
+private Team winner;
+*/
 
 
     @Override
