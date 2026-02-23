@@ -19,12 +19,12 @@ public class TestMatch {
 
 	@Given("a Round exists")
 	public void a_round_exists() {
-		round = new Round(); // Assuming a default constructor exists
+		round = new Round();
 	}
 
 	@Given("a Competition Table exists")
 	public void a_competition_table_exists() {
-		table = new CompetitionTable(); // Assuming a default constructor exists
+		table = new CompetitionTable();
 	}
 
 	@When("I create a new match starting at {string} and ending at {string}")
@@ -38,8 +38,6 @@ public class TestMatch {
 
 	@Then("the match should be linked to the round and the table")
 	public void the_match_should_be_linked() {
-		assertNotNull(match.getRound());
-		assertNotNull(match.getCompetitionTable());
 		assertEquals(round, match.getRound());
 		assertEquals(table, match.getCompetitionTable());
 	}

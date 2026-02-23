@@ -3,15 +3,13 @@ Feature: Round Management
 	I want to manage matches within a round
 	So that the tournament structure remains consistent
 
-	Scenario: Adding matches to a round
-    	Given a new Round with number 1
-    	When I add 3 new matches to this round
- 		Then the round should contain 3 matches
-    	And each match should reference the round with number 1
+	Scenario: Adding matches to a round via Database
+		Given a new Round with number 1 is saved
+		When I add 3 matches via repository
+		Then the database should show 3 matches for this round
 
-	Scenario: Removing a match from a round
-    	Given a new Round with number 2
-    	And the round has 2 matches
-    	When I remove one match from the round
-    	Then the round should contain 1 match
-    	And the removed match should no longer reference the round
+	Scenario: Removing a match and verifying orphan removal
+		Given a new Round with number 2 is saved
+		And I add 1 matches via repository
+		When I remove a match from the saved round
+		Then the match should be deleted from the database
