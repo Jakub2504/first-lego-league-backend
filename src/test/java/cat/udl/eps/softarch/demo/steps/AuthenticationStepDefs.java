@@ -1,35 +1,66 @@
 package cat.udl.eps.softarch.demo.steps;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import io.cucumber.java.Before;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.nio.charset.StandardCharsets;
+import org.springframework.http.MediaType;
+import io.cucumber.java.en.When;
 import io.cucumber.java.en.Given;
 
-public class AuthenticationStepDefs {
+public class AwardAndMatchStepDefs {
+    
+    private final StepDefs stepDefs;
+    private String teamUri = "/teams/1";
+    private String editionUri = "/editions/1";
 
-	public static String currentUsername;
-	public static String currentPassword;
+    public AwardAndMatchStepDefs(StepDefs stepDefs) {
+        this.stepDefs = stepDefs;
+    }
 
-	@Before
-	public void setup() {
-		// Clear authentication credentials at the start of every test.
-		AuthenticationStepDefs.currentPassword = "";
-		AuthenticationStepDefs.currentUsername = "";
-	}
+    @Given("^The dependencies exist$")
+    public void theDependenciesExist() throws Throwable {
+        var edReq = post("/editions").contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"2024\"}").with(AuthenticationStepDefs.authenticate());
+        var edRes = stepDefs.mockMvc.perform(edReq).andReturn().getResponse();
+        if (edRes.getStatus() == 201) editionUri = edRes.getHeader("Location");
 
-	static RequestPostProcessor authenticate() {
-		return currentUsername != null ? httpBasic(currentUsername, currentPassword) : anonymous();
-	}
+        var teamReq = post("/teams").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"Test Team\"}").with(AuthenticationStepDefs.authenticate());
+        var teamRes = stepDefs.mockMvc.perform(teamReq).andReturn().getResponse();
+        if (teamRes.getStatus() == 201) teamUri = teamRes.getHeader("Location");
+    }
 
-	@Given("^I login as \"([^\"]*)\" with password \"([^\"]*)\"$")
-	public void iLoginAsWithPassword(String username, String password) {
-		AuthenticationStepDefs.currentUsername = username;
-		AuthenticationStepDefs.currentPassword = password;
-	}
+    @When("^I request the match results list$")
+    public void iRequestTheMatchResultsList() throws Throwable {
+        var request = get("/matchResults").accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
+        stepDefs.result = stepDefs.mockMvc.perform(request);
+    }
 
-	@Given("^I'm not logged in$")
-	public void iMNotLoggedIn() {
-		currentUsername = currentPassword = null;
-	}
+    @When("^I request the awards list$")
+    public void iRequestTheAwardsList() throws Throwable {
+        var request = get("/awards").accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
+        stepDefs.result = stepDefs.mockMvc.perform(request);
+    }
+
+    @When("^I create a match result with score (-?\\d+)$")
+    public void iCreateAMatchResultWithScore(int score) throws Throwable {
+        String payload = "{\"score\": " + score + ", \"team\": \"" + teamUri + "\"}";
+        var request = post("/matchResults").contentType(MediaType.APPLICATION_JSON).content(payload)
+                .characterEncoding(StandardCharsets.UTF_8).accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
+        stepDefs.result = stepDefs.mockMvc.perform(request);
+    }
+
+    @When("^I create an award with name \"([^\"]*)\"$")
+    public void iCreateAnAwardWithName(String name) throws Throwable {
+        String payload = "{\"name\": \"" + name + "\", \"edition\": \"" + editionUri + "\", \"winner\": \"" + teamUri + "\"}";
+        var request = post("/awards").contentType(MediaType.APPLICATION_JSON).content(payload)
+                .characterEncoding(StandardCharsets.UTF_8).accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
+        stepDefs.result = stepDefs.mockMvc.perform(request);
+    }
+
+    @When("^I create an award with no name$")
+    public void iCreateAnAwardWithNoName() throws Throwable {
+        String payload = "{\"edition\": \"" + editionUri + "\", \"winner\": \"" + teamUri + "\"}";
+        var request = post("/awards").contentType(MediaType.APPLICATION_JSON).content(payload)
+                .characterEncoding(StandardCharsets.UTF_8).accept(MediaType.APPLICATION_JSON).with(AuthenticationStepDefs.authenticate());
+        stepDefs.result = stepDefs.mockMvc.perform(request);
+    }
 }
