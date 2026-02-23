@@ -34,7 +34,8 @@ public class AwardAndMatchStepDefs {
 
     @When("^I create a match result with score (-?\\d+)$")
     public void iCreateAMatchResultWithScore(int score) throws Throwable {
-        String payload = "{\"score\": " + score + ", \"match\": \"/matches/1\", \"team\": \"/teams/1\"}";
+        // AQUÍ ESTÀ EL CANVI: Hem tret el camp "match" perquè l'hem comentat a l'entitat
+        String payload = "{\"score\": " + score + ", \"team\": \"/teams/1\"}";
         var request = post("/matchResults");
         request.contentType(MediaType.APPLICATION_JSON);
         request.content(payload);
