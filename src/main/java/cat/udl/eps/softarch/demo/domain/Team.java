@@ -123,6 +123,9 @@ public class Team extends UriEntity<String> {
 	}
 
 	public void removeFloater(Floater floater) {
+		if (floater == null || !floaters.contains(floater)) {
+			return;
+		}
 		floaters.remove(floater);
 		floater.getAssistedTeams().remove(this);
 	}

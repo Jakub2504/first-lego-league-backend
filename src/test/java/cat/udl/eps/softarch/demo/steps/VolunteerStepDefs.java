@@ -102,7 +102,8 @@ public class VolunteerStepDefs {
 	@Then("the floater creation should fail with validation error")
 	public void floaterCreationShouldFail() {
 		assertNotNull(lastException);
-		assertTrue(isValidationOrConstraintException(lastException));
+		assertTrue(isValidationOrConstraintException(lastException),
+			"Expected a validation or constraint exception but got: " + lastException.getClass().getName());
 	}
 	private boolean isValidationOrConstraintException(Throwable ex) {
 		Throwable current = ex;
@@ -187,9 +188,9 @@ public class VolunteerStepDefs {
 	@When("I assign the floater {string} to team {string}")
 	@Transactional
 	public void assignFloaterToTeam(String studentCode, String teamName) {
-		Optional<Floater> floater = floaterRepository.findByStudentCode(studentCode);
+		Floater floater = floaterRepository.findByStudentCode(studentCode).orElseThrow();
 		Team team = teamRepository.findByName(teamName).orElseThrow();
-		floater.ifPresent(team::addFloater);
+		team.addFloater(floater);
 		teamRepository.save(team);
 	}
 
@@ -211,9 +212,9 @@ public class VolunteerStepDefs {
 	@When("I remove the floater {string} from team {string}")
 	@Transactional
 	public void removeFloaterFromTeam(String studentCode, String teamName) {
-		Optional<Floater> floater = floaterRepository.findByStudentCode(studentCode);
+		Floater floater = floaterRepository.findByStudentCode(studentCode).orElseThrow();
 		Team team = teamRepository.findByName(teamName).orElseThrow();
-		floater.ifPresent(team::removeFloater);
+		team.removeFloater(floater);
 		teamRepository.save(team);
 	}
 }
