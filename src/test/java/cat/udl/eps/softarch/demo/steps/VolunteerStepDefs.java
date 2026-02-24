@@ -1,7 +1,11 @@
 package cat.udl.eps.softarch.demo.steps;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.demo.domain.Floater;
 import cat.udl.eps.softarch.demo.domain.Team;
 import cat.udl.eps.softarch.demo.repository.FloaterRepository;
@@ -10,11 +14,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 public class VolunteerStepDefs {
 
@@ -26,9 +25,7 @@ public class VolunteerStepDefs {
 	private Exception lastException;
 	private List<Floater> searchResults;
 
-	public VolunteerStepDefs(
-		FloaterRepository floaterRepository,
-		TeamRepository teamRepository) {
+	public VolunteerStepDefs(FloaterRepository floaterRepository, TeamRepository teamRepository) {
 		this.floaterRepository = floaterRepository;
 		this.teamRepository = teamRepository;
 	}
@@ -103,17 +100,18 @@ public class VolunteerStepDefs {
 	public void floaterCreationShouldFail() {
 		assertNotNull(lastException);
 		assertTrue(isValidationOrConstraintException(lastException),
-			"Expected a validation or constraint exception but got: " + lastException.getClass().getName());
+				"Expected a validation or constraint exception but got: " + lastException.getClass().getName());
 	}
+
 	private boolean isValidationOrConstraintException(Throwable ex) {
 		Throwable current = ex;
 		while (current != null) {
 			if (current instanceof ConstraintViolationException
-			|| current instanceof org.springframework.dao.DataIntegrityViolationException) {
+					|| current instanceof org.springframework.dao.DataIntegrityViolationException) {
 				return true;
 			}
 			current = current.getCause();
-			}
+		}
 		return false;
 	}
 
@@ -121,8 +119,10 @@ public class VolunteerStepDefs {
 	public void verifyErrorMessage(String expectedMessage) {
 		assertNotNull(lastException, "No exception was captured");
 		assertTrue(findMessageInExceptionChain(lastException, expectedMessage),
-			"Error message '" + expectedMessage + "' not found in exception chain. Got: " + lastException.getMessage());
+				"Error message '" + expectedMessage + "' not found in exception chain. Got: "
+						+ lastException.getMessage());
 	}
+
 	private boolean findMessageInExceptionChain(Throwable ex, String expectedMessage) {
 		Throwable current = ex;
 		while (current != null) {
