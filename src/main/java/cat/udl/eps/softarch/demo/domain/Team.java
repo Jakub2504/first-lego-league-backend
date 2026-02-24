@@ -94,18 +94,17 @@ public class Team extends UriEntity<String> {
 
 	@ManyToMany
 	@JoinTable(
-		name = "team_coach",
-		joinColumns = @JoinColumn(name = "team_name"),
-		inverseJoinColumns = @JoinColumn(name = "coach_id"))
+			name = "team_coach",
+			joinColumns = @JoinColumn(name = "team_name"),
+			inverseJoinColumns = @JoinColumn(name = "coach_id"))
 	@ToString.Exclude
 	private Set<Coach> trainedBy = new HashSet<>();
 
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(
-		name = "team_floaters",
-		joinColumns = @JoinColumn(name = "team_name"),
-		inverseJoinColumns = @JoinColumn(name = "floater_id")
-	)
+			name = "team_floaters",
+			joinColumns = @JoinColumn(name = "team_name"),
+			inverseJoinColumns = @JoinColumn(name = "floater_id"))
 	@ToString.Exclude
 	private Set<Floater> floaters = new HashSet<>();
 
@@ -113,7 +112,7 @@ public class Team extends UriEntity<String> {
 
 	public void addFloater(Floater floater) {
 		if (floaters.contains(floater)) {
-			throw new IllegalArgumentException("Floater cannot be null");
+			return;
 		}
 		if (floaters.size() >= 2) {
 			throw new IllegalStateException("A team cannot have more than 2 floaters");
