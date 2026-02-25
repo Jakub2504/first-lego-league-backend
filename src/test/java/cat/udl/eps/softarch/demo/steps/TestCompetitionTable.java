@@ -1,6 +1,8 @@
 package cat.udl.eps.softarch.demo.steps;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import cat.udl.eps.softarch.demo.domain.CompetitionTable;
 import cat.udl.eps.softarch.demo.domain.Referee;
 import io.cucumber.java.en.Given;
@@ -22,8 +24,15 @@ public class TestCompetitionTable {
 	@When("I add a referee named {string} to the table")
 	public void i_add_a_referee_named(String name) {
 		referee = new Referee();
-		// referee.setName(name); // Descomentar si Volunteer tiene setName
+		referee.setName(name);
 		table.addReferee(referee);
+	}
+
+	@When("I try to add another referee to the table")
+	public void i_try_to_add_another_referee_to_the_table() {
+		exceptionCaptured = assertThrows(IllegalStateException.class, () -> {
+			table.addReferee(new Referee());
+		});
 	}
 
 	@Then("the table should have {int} referee")
@@ -39,15 +48,19 @@ public class TestCompetitionTable {
 
 	@Given("the table already has {int} referees")
 	public void the_table_already_has_referees(Integer count) {
-		for (int i = 0; i < count; i++) {
-			table.addReferee(new Referee());
+		for (long i = 0; i < count; i++) {
+			Referee ref = new Referee();
+			ref.setId(i);
+			table.addReferee(ref);
 		}
 	}
 
 	@Then("the validation should prevent adding a 4th referee")
 	public void the_validation_should_prevent_adding_a_4th_referee() {
 		exceptionCaptured = assertThrows(IllegalStateException.class, () -> {
-			table.addReferee(new Referee());
+			Referee newReferee = new Referee();
+			newReferee.setId(999L);
+			table.addReferee(newReferee);
 		});
 
 		assertNotNull(exceptionCaptured);
