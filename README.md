@@ -9,19 +9,19 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 
 ## Vision
 
-**For** ... **who** want to ...
-**the project** ... **is an** ...
-**that** allows ...
-**Unlike** other ...
+**For** the FLL Igualada organizers, volunteers, and participants **who** need to efficiently manage the competition logistics and track real-time progress, **the project** FLL Backend **is an** event management and scoring system **that** allows for seamless coordination of teams, judges, matches, and multimedia content. **Unlike** manual tracking methods, our system enforces specific FLL rules (such as unique matchmaking constraints), validates volunteer roles, and provides an engaging, mobile-accessible experience for the community.
 
 ## Features per Stakeholder
 
-| USER                | ADMIN                |
-|---------------------|----------------------|
-| Register            |                      |
-| Login               |                      |
-| Logout              |                      |
-|                     |                      |
+| USER                                                       | ADMIN                                                             |
+|------------------------------------------------------------|-------------------------------------------------------------------|
+| Register & Login                                           | Register & Login                                                  |
+| View match schedules, live scores, and global rankings     | CRUD operations for Teams, Educational Centers, and Volunteers    |
+| Access multimedia gallery (photos and videos) of the event | Manage Project Rooms and assign Judges to specific rooms          |
+| Post comments to foster community (Authenticated users)    | View specific assessment sheets filled out by Judges              |
+| View Team profiles and statistics                          | Generate Matches ensuring a team never plays the same rival twice |
+|                                                            | Manage Competition Tables and Rounds                              |
+|                                                            | Validate Volunteer roles (prevent Judge/Referee conflicts)        |
 
 ## Entities Model
 
