@@ -31,7 +31,7 @@ public class AwardAndMatchStepDefs {
         if (edRes.getStatus() == 201) {
             editionUri = edRes.getHeader("Location");
         } else if (edRes.getStatus() == 409) {
-            editionUri = "/editions/1";
+            editionUri = "http://localhost/editions/1"; // <-- CORREGIT
         } else {
             throw new IllegalStateException("Failed to create edition fixture, status: " + edRes.getStatus());
         }
@@ -47,7 +47,7 @@ public class AwardAndMatchStepDefs {
         if (teamRes.getStatus() == 201) {
             teamUri = teamRes.getHeader("Location");
         } else if (teamRes.getStatus() == 409) {
-            teamUri = "/teams/Team%20A";
+            teamUri = "http://localhost/teams/Team%20A"; // <-- CORREGIT
         } else {
             throw new IllegalStateException("Failed to create team fixture, status: " + teamRes.getStatus());
         }
@@ -63,7 +63,7 @@ public class AwardAndMatchStepDefs {
         if (matchRes.getStatus() == 201) {
             matchUri = matchRes.getHeader("Location");
         } else {
-            matchUri = "/matches/1";
+            matchUri = "http://localhost/matches/1"; // <-- CORREGIT
         }
     }
 
@@ -88,8 +88,6 @@ public class AwardAndMatchStepDefs {
         String payload = String.format("{\"score\": %d, \"team\": \"%s\", \"match\": \"%s\"}", 
                                         score, teamUri, matchUri);
         
-        System.out.println("-----> ENVIANT A MATCHRESULT: " + payload);
-        
         var request = post("/matchResults")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload)
@@ -98,9 +96,6 @@ public class AwardAndMatchStepDefs {
                 .with(AuthenticationStepDefs.authenticate());
                 
         stepDefs.result = stepDefs.mockMvc.perform(request);
-        
-        String respostaServidor = stepDefs.result.andReturn().getResponse().getContentAsString();
-        System.out.println("-----> RESPOSTA DEL SERVIDOR (400): " + respostaServidor);
     }
 
     @When("^I create an award with name \"([^\"]*)\"$")
