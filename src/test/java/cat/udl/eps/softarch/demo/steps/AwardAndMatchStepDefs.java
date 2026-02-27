@@ -8,15 +8,20 @@ import org.json.JSONObject;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Given;
 
+import cat.udl.eps.softarch.demo.domain.Match;
+import cat.udl.eps.softarch.demo.repository.MatchRepository;
+
 public class AwardAndMatchStepDefs {
     
     private final StepDefs stepDefs;
+    private final MatchRepository matchRepository;
     private String teamUri; 
     private String editionUri;
     private String matchUri;
 
-    public AwardAndMatchStepDefs(StepDefs stepDefs) {
+    public AwardAndMatchStepDefs(StepDefs stepDefs, MatchRepository matchRepository) {
         this.stepDefs = stepDefs;
+        this.matchRepository = matchRepository;
     }
 
     @Given("^The dependencies exist$")
@@ -52,14 +57,9 @@ public class AwardAndMatchStepDefs {
         else if (teamRes.getStatus() == 409) teamUri = "http://localhost/teams/TeamA";
         else throw new RuntimeException("ERROR CREANT TEAM: " + teamRes.getContentAsString());
 
-        var matchRes = stepDefs.mockMvc.perform(post("/matches")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{}")
-            .characterEncoding(StandardCharsets.UTF_8)
-            .with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
-            
-        if (matchRes.getStatus() == 201) matchUri = matchRes.getHeader("Location");
-        else throw new RuntimeException("ERROR CREANT MATCH: " + matchRes.getContentAsString());
+        Match match = new Match();
+        match = matchRepository.save(match);
+        matchUri = "http://localhost/matches/" + match.getId();
     }
 
     @When("^I request the match results list$")
