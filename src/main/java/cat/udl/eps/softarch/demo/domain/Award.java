@@ -41,6 +41,7 @@ public class Award extends UriEntity<AwardId> {
 	 * Serialized as a URI reference to avoid infinite recursion.
 	 */
 
+	 @NotNull
 	@ManyToOne
 	@JsonIdentityReference(alwaysAsId = true)
 	private Team winner;
