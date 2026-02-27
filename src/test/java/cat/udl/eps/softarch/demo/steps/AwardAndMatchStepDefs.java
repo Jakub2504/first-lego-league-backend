@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import java.nio.charset.StandardCharsets;
 import org.springframework.http.MediaType;
-import org.json.JSONObject; // Ho utilitzem com fan a RegisterStepDefs
+import org.json.JSONObject;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Given;
 
@@ -26,44 +26,40 @@ public class AwardAndMatchStepDefs {
         editionJson.put("venueName", "EPS Igualada");
         editionJson.put("description", "Test Edition");
 
-        var edReq = post("/editions")
+        var edRes = stepDefs.mockMvc.perform(post("/editions")
             .contentType(MediaType.APPLICATION_JSON)
             .content(editionJson.toString())
             .characterEncoding(StandardCharsets.UTF_8)
-            .accept(MediaType.APPLICATION_JSON)
-            .with(AuthenticationStepDefs.authenticate());
+            .with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
             
-        var edRes = stepDefs.mockMvc.perform(edReq).andReturn().getResponse();
         if (edRes.getStatus() == 201) editionUri = edRes.getHeader("Location");
-        else editionUri = "http://localhost/editions/1";
+        else if (edRes.getStatus() == 409) editionUri = "http://localhost/editions/1";
+        else throw new RuntimeException("ERROR CREANT EDITION: " + edRes.getContentAsString());
 
         JSONObject teamJson = new JSONObject();
-        teamJson.put("name", "Team A");
+        teamJson.put("name", "TeamA");
         teamJson.put("city", "Igualada");
         teamJson.put("foundationYear", 2000);
         teamJson.put("category", "Junior");
 
-        var teamReq = post("/teams")
+        var teamRes = stepDefs.mockMvc.perform(post("/teams")
             .contentType(MediaType.APPLICATION_JSON)
             .content(teamJson.toString())
             .characterEncoding(StandardCharsets.UTF_8)
-            .accept(MediaType.APPLICATION_JSON)
-            .with(AuthenticationStepDefs.authenticate());
+            .with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
             
-        var teamRes = stepDefs.mockMvc.perform(teamReq).andReturn().getResponse();
         if (teamRes.getStatus() == 201) teamUri = teamRes.getHeader("Location");
-        else teamUri = "http://localhost/teams/Team%20A";
+        else if (teamRes.getStatus() == 409) teamUri = "http://localhost/teams/TeamA";
+        else throw new RuntimeException("ERROR CREANT TEAM: " + teamRes.getContentAsString());
 
-        var matchReq = post("/matches")
+        var matchRes = stepDefs.mockMvc.perform(post("/matches")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}")
             .characterEncoding(StandardCharsets.UTF_8)
-            .accept(MediaType.APPLICATION_JSON)
-            .with(AuthenticationStepDefs.authenticate());
+            .with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
             
-        var matchRes = stepDefs.mockMvc.perform(matchReq).andReturn().getResponse();
         if (matchRes.getStatus() == 201) matchUri = matchRes.getHeader("Location");
-        else matchUri = "http://localhost/matches/1";
+        else throw new RuntimeException("ERROR CREANT MATCH: " + matchRes.getContentAsString());
     }
 
     @When("^I request the match results list$")
@@ -97,6 +93,11 @@ public class AwardAndMatchStepDefs {
                 .with(AuthenticationStepDefs.authenticate());
                 
         stepDefs.result = stepDefs.mockMvc.perform(request);
+        
+        if (stepDefs.result.andReturn().getResponse().getStatus() == 400) {
+            String errorMsg = stepDefs.result.andReturn().getResponse().getContentAsString();
+            throw new RuntimeException("EL SERVIDOR DÓNA 400 EN CREAR MATCHRESULT. MOTIU: " + errorMsg);
+        }
     }
 
     @When("^I create an award with name \"([^\"]*)\"$")
