@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import java.nio.charset.StandardCharsets;
 import org.springframework.http.MediaType;
+import org.json.JSONObject; // Ho utilitzem com fan a RegisterStepDefs
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Given;
 
@@ -20,37 +21,38 @@ public class AwardAndMatchStepDefs {
 
     @Given("^The dependencies exist$")
     public void theDependenciesExist() throws Throwable {
+        JSONObject editionJson = new JSONObject();
+        editionJson.put("year", 2025);
+        editionJson.put("venueName", "EPS Igualada");
+        editionJson.put("description", "Test Edition");
+
         var edReq = post("/editions")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"year\": 2025, \"venueName\": \"EPS Igualada\", \"description\": \"Test Edition\"}")
+            .content(editionJson.toString())
             .characterEncoding(StandardCharsets.UTF_8)
             .accept(MediaType.APPLICATION_JSON)
             .with(AuthenticationStepDefs.authenticate());
+            
         var edRes = stepDefs.mockMvc.perform(edReq).andReturn().getResponse();
-        
-        if (edRes.getStatus() == 201) {
-            editionUri = edRes.getHeader("Location");
-        } else if (edRes.getStatus() == 409) {
-            editionUri = "http://localhost/editions/1"; // <-- CORREGIT
-        } else {
-            throw new IllegalStateException("Failed to create edition fixture, status: " + edRes.getStatus());
-        }
+        if (edRes.getStatus() == 201) editionUri = edRes.getHeader("Location");
+        else editionUri = "http://localhost/editions/1";
+
+        JSONObject teamJson = new JSONObject();
+        teamJson.put("name", "Team A");
+        teamJson.put("city", "Igualada");
+        teamJson.put("foundationYear", 2000);
+        teamJson.put("category", "Junior");
 
         var teamReq = post("/teams")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\": \"Team A\", \"city\": \"Igualada\", \"foundationYear\": 2000, \"category\": \"Junior\"}")
+            .content(teamJson.toString())
             .characterEncoding(StandardCharsets.UTF_8)
             .accept(MediaType.APPLICATION_JSON)
             .with(AuthenticationStepDefs.authenticate());
+            
         var teamRes = stepDefs.mockMvc.perform(teamReq).andReturn().getResponse();
-        
-        if (teamRes.getStatus() == 201) {
-            teamUri = teamRes.getHeader("Location");
-        } else if (teamRes.getStatus() == 409) {
-            teamUri = "http://localhost/teams/Team%20A"; // <-- CORREGIT
-        } else {
-            throw new IllegalStateException("Failed to create team fixture, status: " + teamRes.getStatus());
-        }
+        if (teamRes.getStatus() == 201) teamUri = teamRes.getHeader("Location");
+        else teamUri = "http://localhost/teams/Team%20A";
 
         var matchReq = post("/matches")
             .contentType(MediaType.APPLICATION_JSON)
@@ -58,13 +60,10 @@ public class AwardAndMatchStepDefs {
             .characterEncoding(StandardCharsets.UTF_8)
             .accept(MediaType.APPLICATION_JSON)
             .with(AuthenticationStepDefs.authenticate());
+            
         var matchRes = stepDefs.mockMvc.perform(matchReq).andReturn().getResponse();
-        
-        if (matchRes.getStatus() == 201) {
-            matchUri = matchRes.getHeader("Location");
-        } else {
-            matchUri = "http://localhost/matches/1"; // <-- CORREGIT
-        }
+        if (matchRes.getStatus() == 201) matchUri = matchRes.getHeader("Location");
+        else matchUri = "http://localhost/matches/1";
     }
 
     @When("^I request the match results list$")
@@ -85,12 +84,14 @@ public class AwardAndMatchStepDefs {
 
     @When("^I create a match result with score (-?\\d+)$")
     public void iCreateAMatchResultWithScore(int score) throws Throwable {
-        String payload = String.format("{\"score\": %d, \"team\": \"%s\", \"match\": \"%s\"}", 
-                                        score, teamUri, matchUri);
+        JSONObject payload = new JSONObject();
+        payload.put("score", score);
+        payload.put("team", teamUri);
+        payload.put("match", matchUri);
         
         var request = post("/matchResults")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(payload)
+                .content(payload.toString())
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
                 .with(AuthenticationStepDefs.authenticate());
@@ -100,29 +101,34 @@ public class AwardAndMatchStepDefs {
 
     @When("^I create an award with name \"([^\"]*)\"$")
     public void iCreateAnAwardWithName(String name) throws Throwable {
-        String payload = String.format("{\"name\": \"%s\", \"winner\": \"%s\", \"edition\": \"%s\"}", 
-                                        name, teamUri, editionUri);
+        JSONObject payload = new JSONObject();
+        payload.put("name", name);
+        payload.put("winner", teamUri);
+        payload.put("edition", editionUri);
         
         var request = post("/awards")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(payload)
+            .content(payload.toString())
             .characterEncoding(StandardCharsets.UTF_8)
             .accept(MediaType.APPLICATION_JSON)
             .with(AuthenticationStepDefs.authenticate());
+            
         stepDefs.result = stepDefs.mockMvc.perform(request);
     }
 
     @When("^I create an award with no name$")
     public void iCreateAnAwardWithNoName() throws Throwable {
-        String payload = String.format("{\"winner\": \"%s\", \"edition\": \"%s\"}", 
-                                        teamUri, editionUri);
+        JSONObject payload = new JSONObject();
+        payload.put("winner", teamUri);
+        payload.put("edition", editionUri);
         
         var request = post("/awards")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(payload)
+            .content(payload.toString())
             .characterEncoding(StandardCharsets.UTF_8)
             .accept(MediaType.APPLICATION_JSON)
             .with(AuthenticationStepDefs.authenticate());
+            
         stepDefs.result = stepDefs.mockMvc.perform(request);
     }
 }

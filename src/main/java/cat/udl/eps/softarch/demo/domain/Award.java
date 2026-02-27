@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "edition_id"})) // Manté la validació del bot
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "edition_id"}))
 public class Award extends UriEntity<Long> {
 
     @Id
