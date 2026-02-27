@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.MapsId;
 
 /**
  * This entity represents an award given to a team in a specific edition.
