@@ -3,6 +3,7 @@ package cat.udl.eps.softarch.demo.steps;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.json.JSONObject;
 import io.cucumber.java.en.When;
@@ -26,8 +27,10 @@ public class AwardAndMatchStepDefs {
 
     @Given("^The dependencies exist$")
     public void theDependenciesExist() throws Throwable {
+        String suffix = UUID.randomUUID().toString().substring(0, 8); 
+
         JSONObject editionJson = new JSONObject();
-        editionJson.put("year", 2025);
+        editionJson.put("year", 2025 + Math.abs(suffix.hashCode() % 100));
         editionJson.put("venueName", "EPS Igualada");
         editionJson.put("description", "Test Edition");
 
@@ -37,12 +40,13 @@ public class AwardAndMatchStepDefs {
             .characterEncoding(StandardCharsets.UTF_8)
             .with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
             
-        if (edRes.getStatus() == 201) editionUri = edRes.getHeader("Location");
-        else if (edRes.getStatus() == 409) editionUri = "http://localhost/editions/1";
-        else throw new RuntimeException("ERROR CREANT EDITION: " + edRes.getContentAsString());
+        if (edRes.getStatus() != 201 || edRes.getHeader("Location") == null) {
+            throw new RuntimeException("ERROR CREANT EDITION: " + edRes.getContentAsString());
+        }
+        editionUri = edRes.getHeader("Location");
 
         JSONObject teamJson = new JSONObject();
-        teamJson.put("name", "TeamA");
+        teamJson.put("name", "TeamA-" + suffix);
         teamJson.put("city", "Igualada");
         teamJson.put("foundationYear", 2000);
         teamJson.put("category", "Junior");
@@ -53,9 +57,10 @@ public class AwardAndMatchStepDefs {
             .characterEncoding(StandardCharsets.UTF_8)
             .with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
             
-        if (teamRes.getStatus() == 201) teamUri = teamRes.getHeader("Location");
-        else if (teamRes.getStatus() == 409) teamUri = "http://localhost/teams/TeamA";
-        else throw new RuntimeException("ERROR CREANT TEAM: " + teamRes.getContentAsString());
+        if (teamRes.getStatus() != 201 || teamRes.getHeader("Location") == null) {
+            throw new RuntimeException("ERROR CREANT TEAM: " + teamRes.getContentAsString());
+        }
+        teamUri = teamRes.getHeader("Location");
 
         Match match = new Match();
         match = matchRepository.save(match);
@@ -98,7 +103,7 @@ public class AwardAndMatchStepDefs {
     @When("^I create an award with name \"([^\"]*)\"$")
     public void iCreateAnAwardWithName(String name) throws Throwable {
         JSONObject payload = new JSONObject();
-        payload.put("name", name);
+        payload.put("name", name + "-" + UUID.randomUUID().toString().substring(0, 4));
         payload.put("winner", teamUri);
         payload.put("edition", editionUri);
         
