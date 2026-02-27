@@ -14,32 +14,48 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 
+/**
+ * This entity represents an award given to a specific team within a specific edition.
+ * Each award belongs to one edition and is granted to one team.
+ */
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "edition_id"}))
 public class Award extends UriEntity<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank
-    private String name;
+	/**
+     * The name of the award.
+     * Must be a non-blank string.
+     */
+	@NotBlank
+	private String name;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "edition_id")
-    @JsonIdentityReference(alwaysAsId = true)
-    private Edition edition;
+	/**
+     * The edition this award belongs to.
+     * Must be a valid edition.
+     */
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "edition_id")
+	@JsonIdentityReference(alwaysAsId = true)
+	private Edition edition;
 
-    @NotNull
-    @ManyToOne
-    @JsonIdentityReference(alwaysAsId = true)
-    private Team winner;
+	/**
+     * The team that won this award.
+     * Must be a valid team.
+     */
+	@NotNull
+	@ManyToOne
+	@JsonIdentityReference(alwaysAsId = true)
+	private Team winner;
 
-    @Override
-    public Long getId() {
-        return this.id;
-    }
+	@Override
+	public Long getId() {
+		return this.id;
+	}
 }
