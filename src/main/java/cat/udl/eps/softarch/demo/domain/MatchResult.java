@@ -2,6 +2,9 @@ package cat.udl.eps.softarch.demo.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NotNull;
+import jakarta.persistence.JsonIdentityReference;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Min;
@@ -24,6 +27,7 @@ public class MatchResult extends UriEntity<Long> {
 	 * The score obtained by the team in this match.
 	 * Must be a non-negative integer.
 	 */
+	@NotNull(message = "Score is mandatory")
 	@Min(value = 0, message = "Score cannot be negative")
 	private Integer score;
 
@@ -32,7 +36,6 @@ public class MatchResult extends UriEntity<Long> {
 		return this.id;
 	}
 
-	/*
 	@NotNull
 	@ManyToOne
 	@JsonIdentityReference(alwaysAsId = true)
@@ -42,5 +45,4 @@ public class MatchResult extends UriEntity<Long> {
 	@ManyToOne
 	@JsonIdentityReference(alwaysAsId = true)
 	private Team team;
-	*/
 }
