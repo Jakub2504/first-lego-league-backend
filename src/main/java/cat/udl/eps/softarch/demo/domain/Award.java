@@ -1,56 +1,45 @@
 package cat.udl.eps.softarch.demo.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import jakarta.validation.constraints.NotNull;
-import jakarta.persistence.MapsId;
 
-/**
- * This entity represents an award given to a team in a specific edition.
- * It is a many-to-many relationship between Edition and Team.
- */
 @Entity
 @Data
-@IdClass(AwardId.class)
 @EqualsAndHashCode(callSuper = true)
-public class Award extends UriEntity<AwardId> {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "edition_id"})) // Manté la validació del bot
+public class Award extends UriEntity<Long> {
 
-	/**
-	 * The name of the award.
-	 * Must be a non-blank string.
-	 */
-	@Id
-	@NotBlank
-	private String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Id
-	@ManyToOne
-	@MapsId("edition")
-	@JoinColumn(name = "edition_id")
-	@JsonIdentityReference(alwaysAsId = true)
-	private Edition edition;
+    @NotBlank
+    private String name;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "edition_id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private Edition edition;
 
-	/**
-	 * The team that won this award.
-	 * Must be a non-null value.
-	 * Serialized as a URI reference to avoid infinite recursion.
-	 */
+    @NotNull
+    @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    private Team winner;
 
-	 @NotNull
-	@ManyToOne
-	@JsonIdentityReference(alwaysAsId = true)
-	private Team winner;
-
-	@Override
-	public AwardId getId() {
-		return new AwardId(this.name, this.edition != null ? this.edition.getId() : null);
-	}
+    @Override
+    public Long getId() {
+        return this.id;
+    }
 }
