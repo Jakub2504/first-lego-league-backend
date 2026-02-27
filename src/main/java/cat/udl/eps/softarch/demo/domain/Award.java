@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * This entity represents an award given to a team in a specific edition.
