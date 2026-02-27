@@ -93,11 +93,6 @@ public class AwardAndMatchStepDefs {
                 .with(AuthenticationStepDefs.authenticate());
                 
         stepDefs.result = stepDefs.mockMvc.perform(request);
-        
-        if (stepDefs.result.andReturn().getResponse().getStatus() == 400) {
-            String errorMsg = stepDefs.result.andReturn().getResponse().getContentAsString();
-            throw new RuntimeException("EL SERVIDOR DÓNA 400 EN CREAR MATCHRESULT. MOTIU: " + errorMsg);
-        }
     }
 
     @When("^I create an award with name \"([^\"]*)\"$")
