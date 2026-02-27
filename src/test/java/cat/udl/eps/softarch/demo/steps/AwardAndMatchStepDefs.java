@@ -85,22 +85,26 @@ public class AwardAndMatchStepDefs {
 
     @When("^I create a match result with score (-?\\d+)$")
     public void iCreateAMatchResultWithScore(int score) throws Throwable {
-        // Construcció robusta del JSON per evitar URIs nul·les
         String payload = String.format("{\"score\": %d, \"team\": \"%s\", \"match\": \"%s\"}", 
                                         score, teamUri, matchUri);
         
+        System.out.println("-----> ENVIANT A MATCHRESULT: " + payload);
+        
         var request = post("/matchResults")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(payload)
-            .characterEncoding(StandardCharsets.UTF_8)
-            .accept(MediaType.APPLICATION_JSON)
-            .with(AuthenticationStepDefs.authenticate());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON)
+                .with(AuthenticationStepDefs.authenticate());
+                
         stepDefs.result = stepDefs.mockMvc.perform(request);
+        
+        String respostaServidor = stepDefs.result.andReturn().getResponse().getContentAsString();
+        System.out.println("-----> RESPOSTA DEL SERVIDOR (400): " + respostaServidor);
     }
 
     @When("^I create an award with name \"([^\"]*)\"$")
     public void iCreateAnAwardWithName(String name) throws Throwable {
-        // L'Award utilitza clau composta (name, edition)
         String payload = String.format("{\"name\": \"%s\", \"winner\": \"%s\", \"edition\": \"%s\"}", 
                                         name, teamUri, editionUri);
         
