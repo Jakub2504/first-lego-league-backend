@@ -29,7 +29,9 @@ public class AwardAndMatchStepDefs {
         var edRes = stepDefs.mockMvc.perform(edReq).andReturn().getResponse();
         if (edRes.getStatus() == 201) {
             editionUri = edRes.getHeader("Location");
-        } else if (edRes.getStatus() != 409) {
+        } else if (edRes.getStatus() == 409) {
+            editionUri = "/editions/1";
+        } else {
             throw new IllegalStateException("Failed to create edition fixture, status: " + edRes.getStatus());
         }
 
@@ -42,7 +44,9 @@ public class AwardAndMatchStepDefs {
         var teamRes = stepDefs.mockMvc.perform(teamReq).andReturn().getResponse();
         if (teamRes.getStatus() == 201) {
             teamUri = teamRes.getHeader("Location");
-        } else if (teamRes.getStatus() != 409) {
+        } else if (teamRes.getStatus() == 409) {
+            teamUri = "/teams/Team%20A";
+        } else {
             throw new IllegalStateException("Failed to create team fixture, status: " + teamRes.getStatus());
         }
 
@@ -55,6 +59,8 @@ public class AwardAndMatchStepDefs {
         var matchRes = stepDefs.mockMvc.perform(matchReq).andReturn().getResponse();
         if (matchRes.getStatus() == 201) {
             matchUri = matchRes.getHeader("Location");
+        } else {
+            matchUri = "/matches/1";
         }
     }
 
