@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.demo.repository;
 
-
+import java.util.List;
 import cat.udl.eps.softarch.demo.domain.Award;
 import cat.udl.eps.softarch.demo.domain.Match;
 import org.springframework.data.jpa.repository.JpaRepository;
