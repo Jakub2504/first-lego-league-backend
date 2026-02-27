@@ -4,6 +4,11 @@ import cat.udl.eps.softarch.demo.domain.MatchResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.repository.query.Param;
+import cat.udl.eps.softarch.demo.domain.Match;
+import cat.udl.eps.softarch.demo.domain.Team;
+import java.util.List;
 
 /**
  * Exposed as a REST resource via Spring Data REST.
