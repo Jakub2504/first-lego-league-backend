@@ -31,6 +31,7 @@ public class Award extends UriEntity<AwardId> {
 
 	@Id
 	@ManyToOne
+	@MapsId("edition")
 	@JoinColumn(name = "edition_id")
 	@JsonIdentityReference(alwaysAsId = true)
 	private Edition edition;
