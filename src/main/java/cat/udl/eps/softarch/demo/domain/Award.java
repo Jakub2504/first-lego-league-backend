@@ -46,7 +46,7 @@ public class Award extends UriEntity<AwardId> {
 	private Team winner;
 
 	@Override
-	public String getId() {
-		return this.name;
+	public AwardId getId() {
+		return new AwardId(this.name, this.edition != null ? this.edition.getId() : null);
 	}
 }
