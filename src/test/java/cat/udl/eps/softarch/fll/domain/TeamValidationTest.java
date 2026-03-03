@@ -2,7 +2,6 @@ package cat.udl.eps.softarch.fll.domain;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,7 +30,7 @@ class TeamValidationTest {
 		void nullNameThrows() {
 			DomainValidationException ex = assertThrows(DomainValidationException.class,
 				() -> Team.create(null, "Lleida", 2020, "Challenge"));
-			assertEquals("name must not be blank", ex.getMessage());
+			assertEquals("name must not be null", ex.getMessage());
 		}
 
 		@Test
