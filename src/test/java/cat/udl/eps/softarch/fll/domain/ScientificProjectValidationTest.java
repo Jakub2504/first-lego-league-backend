@@ -1,10 +1,10 @@
 package cat.udl.eps.softarch.fll.domain;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScientificProjectValidationTest {
 
@@ -19,8 +19,8 @@ class ScientificProjectValidationTest {
 	}
 
 	@Test
-	void validConstructionWithNullScore() {
-		assertDoesNotThrow(() -> ScientificProject.create(null));
+	void invalidConstructionWithNullScore() {
+		assertThrows(DomainValidationException.class, () -> ScientificProject.create(null));
 	}
 
 	@Nested
@@ -29,13 +29,13 @@ class ScientificProjectValidationTest {
 		@Test
 		void negativeScoreThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> ScientificProject.create(-1));
+				() -> ScientificProject.create(-1));
 		}
 
 		@Test
 		void largeNegativeScoreThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> ScientificProject.create(-100));
+				() -> ScientificProject.create(-100));
 		}
 	}
 }
