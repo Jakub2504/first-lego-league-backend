@@ -27,8 +27,7 @@ public class ProjectRoom {
 	@JoinColumn(name = "managed_by_judge_id")
 	private Judge managedByJudge;
 
-	@OneToMany
-	@JoinColumn(name = "memberOfRoom")
+	@OneToMany(mappedBy = "memberOfRoom")
 	private List<Judge> panelists = new ArrayList<>();
 
 }
