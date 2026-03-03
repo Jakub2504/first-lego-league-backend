@@ -57,6 +57,18 @@ public final class DomainValidation {
 		}
 	}
 
+	public static void requireLengthBetween(String value, Integer minLength, Integer maxLength, String fieldName) {
+		if (value == null) {
+			throw new DomainValidationException(fieldName + " must not be null");
+		}
+		if (value.length() < minLength) {
+			throw new DomainValidationException(fieldName + " length must not be less than " + minLength);
+		}
+		if (value.length() > maxLength) {
+			throw new DomainValidationException(fieldName + " length must not be more than " + maxLength);
+		}
+	}
+
 	public static void requireNonNull(Object value, String fieldName) {
 		if (value == null) {
 			throw new DomainValidationException(fieldName + " must not be null");

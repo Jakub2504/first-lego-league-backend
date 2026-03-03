@@ -45,7 +45,7 @@ public class User extends UriEntity<String> implements UserDetails {
 	public static User create(String id, String email, String password) {
 		DomainValidation.requireNonBlank(id, "id");
 		DomainValidation.requireValidEmail(email, "email");
-		DomainValidation.requireNonBlank(password, "password");
+		DomainValidation.requireLengthBetween(password, 8, 256, "password");
 
 		User user = new User();
 		user.id = id;

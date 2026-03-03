@@ -31,9 +31,6 @@ public class Venue {
 	@Column(name = "city", nullable = false)
 	private String city;
 
-	public Venue() {
-	}
-
 	public static Venue create(String name, String city) {
 		DomainValidation.requireNonBlank(name, "name");
 		DomainValidation.requireNonBlank(city, "city");
