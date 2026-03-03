@@ -72,7 +72,7 @@ public class MatchScoreRegistrationStepDefs {
 
 	@When("^I register a score for a non existing match$")
 	public void iRegisterAScoreForANonExistingMatch() throws Throwable {
-		postRegisterScorePayload(match.getId() + 99999L, teamA.getId(), teamB.getId(), 120, 95);
+		postRegisterScorePayload(Long.MAX_VALUE, teamA.getId(), teamB.getId(), 120, 95);
 	}
 
 	@When("^I register a final score with mismatched teams$")
