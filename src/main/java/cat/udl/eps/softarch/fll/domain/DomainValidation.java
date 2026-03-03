@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.fll.domain;
 
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 public final class DomainValidation {
@@ -44,6 +45,15 @@ public final class DomainValidation {
 		}
 		if (value < minValue) {
 			throw new DomainValidationException(fieldName + " must not be less than " + minValue);
+		}
+	}
+
+	public static void requirePast(LocalDate value, String fieldName) {
+		if (value == null) {
+			throw new DomainValidationException(fieldName + " must not be null");
+		}
+		if (value.toEpochDay() > LocalDate.now().toEpochDay()) {
+			throw new DomainValidationException(fieldName + " must be in the past");
 		}
 	}
 

@@ -53,15 +53,17 @@ public class TeamMember extends UriEntity<Long> {
 	@JsonIdentityReference(alwaysAsId = true)
 	private Team team;
 
-	public static TeamMember create(String name, String role, Team team) {
+	public static TeamMember create(String name, String role, LocalDate birthDate, Team team) {
 		DomainValidation.requireNonBlank(name, "name");
 		DomainValidation.requireNonBlank(role, "role");
+		DomainValidation.requirePast(birthDate, "birthDate");
 		DomainValidation.requireNonNull(team, "team");
 
 		TeamMember member = new TeamMember();
 		member.name = name;
 		member.role = role;
-		member.team = team;
+		member.birthDate = birthDate;
+		team.addMember(member);
 		return member;
 	}
 

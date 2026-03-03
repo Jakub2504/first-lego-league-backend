@@ -3,6 +3,8 @@ package cat.udl.eps.softarch.fll.domain;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -12,7 +14,13 @@ class TeamMemberValidationTest {
 
 	@Test
 	void validConstruction() {
-		assertDoesNotThrow(() -> TeamMember.create("Alice", "Player", validTeam));
+		assertDoesNotThrow(() -> TeamMember.create("Alice", "Player", LocalDate.ofYearDay(0, 1), validTeam));
+	}
+
+	@Test
+	void futureDateThrows() {
+		assertThrows(DomainValidationException.class,
+			() -> TeamMember.create(null, "Player", LocalDate.now().plusDays(1), validTeam));
 	}
 
 	@Nested
@@ -21,19 +29,19 @@ class TeamMemberValidationTest {
 		@Test
 		void nullNameThrows() {
 			assertThrows(DomainValidationException.class,
-				() -> TeamMember.create(null, "Player", validTeam));
+				() -> TeamMember.create(null, "Player", LocalDate.ofYearDay(0, 1), validTeam));
 		}
 
 		@Test
 		void blankNameThrows() {
 			assertThrows(DomainValidationException.class,
-				() -> TeamMember.create("  ", "Player", validTeam));
+				() -> TeamMember.create("  ", "Player", LocalDate.ofYearDay(0, 1), validTeam));
 		}
 
 		@Test
 		void blankRoleThrows() {
 			assertThrows(DomainValidationException.class,
-				() -> TeamMember.create("Alice", "", validTeam));
+				() -> TeamMember.create("Alice", "", LocalDate.ofYearDay(0, 1), validTeam));
 		}
 	}
 
@@ -43,7 +51,7 @@ class TeamMemberValidationTest {
 		@Test
 		void nullTeamThrows() {
 			assertThrows(DomainValidationException.class,
-				() -> TeamMember.create("Alice", "Player", null));
+				() -> TeamMember.create("Alice", "Player", LocalDate.ofYearDay(0, 1), null));
 		}
 	}
 }
