@@ -38,10 +38,12 @@ public class CompetitionTable extends UriEntity<String> {
 	private List<Referee> referees = new ArrayList<>();
 
 	public void setMatches(List<Match> matches) {
-		new ArrayList<>(this.matches).forEach(this::removeMatch);
-		if (matches != null) {
-			matches.forEach(this::addMatch);
+		if (matches == this.matches) {
+			return;
 		}
+		List<Match> incoming = (matches == null) ? List.of() : new ArrayList<>(matches);
+		new ArrayList<>(this.matches).forEach(this::removeMatch);
+		incoming.forEach(this::addMatch);
 	}
 
 	public void addMatch(Match match) {
@@ -73,10 +75,12 @@ public class CompetitionTable extends UriEntity<String> {
 	}
 
 	public void setReferees(List<Referee> referees) {
-		new ArrayList<>(this.referees).forEach(this::removeReferee);
-		if (referees != null) {
-			referees.forEach(this::addReferee);
+		if (referees == this.referees) {
+			return;
 		}
+		List<Referee> incoming = (referees == null) ? List.of() : new ArrayList<>(referees);
+		new ArrayList<>(this.referees).forEach(this::removeReferee);
+		incoming.forEach(this::addReferee);
 	}
 
 	public void addReferee(Referee referee) {
