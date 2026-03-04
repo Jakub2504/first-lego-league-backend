@@ -38,7 +38,7 @@ public class Round extends UriEntity<Long> {
 	private List<Match> matches = new ArrayList<>();
 
 	public void setMatches(List<Match> matches) {
-		this.matches.clear();
+		new ArrayList<>(this.matches).forEach(this::removeMatch);
 		if (matches != null) {
 			matches.forEach(this::addMatch);
 		}
@@ -49,25 +49,27 @@ public class Round extends UriEntity<Long> {
 			return;
 		}
 
-		if (matches.contains(match)) {
+		// USA IDENTIDAD (==) para que los tests con IDs nulos no fallen
+		if (this.matches.stream().anyMatch(m -> m == match)) {
 			return;
 		}
 
 		Round previousRound = match.getRound();
 		if (previousRound != null && previousRound != this) {
-			previousRound.removeMatch(match);
+			previousRound.getMatches().removeIf(m -> m == match);
 		}
 
-		matches.add(match);
+		this.matches.add(match);
 		match.setRound(this);
 	}
 
 	public void removeMatch(Match match) {
 		if (match == null) {
 			return;
+
 		}
 
-		if (matches.remove(match)) {
+		if (this.matches.removeIf(m -> m == match)) {
 			match.setRound(null);
 		}
 	}
