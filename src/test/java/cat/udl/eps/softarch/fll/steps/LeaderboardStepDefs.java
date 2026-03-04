@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.http.MediaType;
 import cat.udl.eps.softarch.fll.domain.Edition;
 import cat.udl.eps.softarch.fll.domain.Match;
@@ -23,6 +24,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 public class LeaderboardStepDefs {
+	private static final AtomicInteger ROUND_NUMBER_SEQUENCE = new AtomicInteger(10000);
 
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
@@ -166,7 +168,7 @@ public class LeaderboardStepDefs {
 
 	private Round createRoundForEdition(Edition edition) {
 		Round round = new Round();
-		round.setNumber(10000 + ((UUID.randomUUID().hashCode() & 0x7fffffff) % 1000000));
+		round.setNumber(ROUND_NUMBER_SEQUENCE.getAndIncrement());
 		round.setEdition(edition);
 		return roundRepository.save(round);
 	}

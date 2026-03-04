@@ -1,6 +1,8 @@
 package cat.udl.eps.softarch.fll.controller;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -44,8 +46,21 @@ public class LeaderboardController {
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(Map.of("message", ex.getMessage()));
+	public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
+		Map<String, String> errors = ex.getConstraintViolations().stream()
+				.collect(Collectors.toMap(
+						violation -> {
+							String propertyPath = violation.getPropertyPath().toString();
+							int lastDot = propertyPath.lastIndexOf('.');
+							return lastDot >= 0 ? propertyPath.substring(lastDot + 1) : propertyPath;
+						},
+						violation -> violation.getMessage(),
+						(first, second) -> first,
+						LinkedHashMap::new));
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("message", "Validation failed");
+		body.put("errors", errors);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
 	}
 }
