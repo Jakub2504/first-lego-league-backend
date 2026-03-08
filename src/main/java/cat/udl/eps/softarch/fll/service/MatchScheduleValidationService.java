@@ -24,7 +24,7 @@ public class MatchScheduleValidationService {
 	public void validateForCreateOrUpdate(Match match) {
 		validateTimeRange(match.getStartTime(), match.getEndTime());
 
-		if (match.getCompetitionTable() != null) {
+		if (match.getCompetitionTable() != null && match.getCompetitionTable().getId() != null) {
 			validateNoTableOverlap(
 					match.getCompetitionTable().getId(),
 					match.getStartTime(),

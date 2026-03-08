@@ -73,6 +73,7 @@ class MatchScheduleValidationServiceTest {
 	void tableTimeOverlap_throwsTableTimeOverlap() {
 		Match match = createMatch("10:30", "11:30");
 		CompetitionTable table = new CompetitionTable();
+		table.setId("Table-1");
 		match.setCompetitionTable(table);
 
 		Match existingMatch = createMatch("10:00", "11:00");
