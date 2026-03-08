@@ -33,5 +33,11 @@ public class ScientificProject extends UriEntity<Long> {
 	@JoinColumn(name = "team_name", nullable = false)
 	@JsonIdentityReference(alwaysAsId = true)
 	private Team team;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "edition_id", nullable = false)
+	@JsonIdentityReference(alwaysAsId = true)
+	private Edition edition;
 }
 

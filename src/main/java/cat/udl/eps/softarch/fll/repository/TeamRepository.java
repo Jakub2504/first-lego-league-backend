@@ -2,6 +2,7 @@ package cat.udl.eps.softarch.fll.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,9 @@ public interface TeamRepository extends CrudRepository<Team, String>, PagingAndS
 	List<Team> findByMembersRole(@Param("role") String role);
 
 	Optional<Team> findByName(@Param("name") String name);
+
+	boolean existsByIdAndRegisteredEditionsId(String teamId, Long editionId);
+
+	@Query("select distinct t from Team t left join fetch t.registeredEditions where t.name = :name")
+	Optional<Team> findByNameWithRegisteredEditions(@Param("name") String name);
 }
