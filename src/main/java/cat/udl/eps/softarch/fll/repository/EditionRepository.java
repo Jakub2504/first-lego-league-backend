@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import cat.udl.eps.softarch.fll.domain.Edition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RepositoryRestResource
 public interface EditionRepository extends CrudRepository<Edition, Long>, PagingAndSortingRepository<Edition, Long> {
 
+	@RestResource(exported = false)
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select e from Edition e where e.id = :id")
 	Optional<Edition> findByIdForUpdate(@Param("id") Long id);
