@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.fll.domain.Edition;
+import cat.udl.eps.softarch.fll.domain.EditionState;
 import cat.udl.eps.softarch.fll.domain.Team;
 import cat.udl.eps.softarch.fll.repository.EditionRepository;
 import cat.udl.eps.softarch.fll.repository.TeamRepository;
@@ -79,6 +80,14 @@ public class TeamEditionRegistrationStepDefs {
 			});
 			edition.getTeams().add(team);
 		});
+		editionRepository.save(edition);
+	}
+
+	@Given("The current edition is in state {string}")
+	@Transactional
+	public void currentEditionIsInState(String state) {
+		Edition edition = editionRepository.findById(currentEditionId()).orElseThrow();
+		edition.setState(EditionState.valueOf(state));
 		editionRepository.save(edition);
 	}
 

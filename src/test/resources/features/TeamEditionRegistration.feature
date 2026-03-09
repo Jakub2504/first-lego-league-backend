@@ -10,6 +10,7 @@ Feature: Team Edition Registration
   @HappyPath
   Scenario: Successfully register a team to an edition
     Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And The current edition is in state "OPEN"
     And There is a team named "LegoStars" from "Igualada" with category "Challenge"
     When I register team "LegoStars" to the current edition
     Then The response code is 201
@@ -26,6 +27,7 @@ Feature: Team Edition Registration
   @Validation
   Scenario: Cannot register a non-existent team to an edition
     Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And The current edition is in state "OPEN"
     When I register team "NonExistentTeam" to the current edition
     Then The response code is 404
     And The response has error "TEAM_NOT_FOUND"
@@ -34,6 +36,7 @@ Feature: Team Edition Registration
   @BusinessRules
   Scenario: Cannot register a team already registered in the edition
     Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And The current edition is in state "OPEN"
     And There is a team named "LegoStars" from "Igualada" with category "Challenge"
     And Team "LegoStars" is already registered in the current edition
     When I register team "LegoStars" to the current edition
@@ -44,6 +47,7 @@ Feature: Team Edition Registration
   @BusinessRules
   Scenario: Cannot exceed maximum of 18 teams per edition
     Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And The current edition is in state "OPEN"
     And The current edition already has 18 teams registered
     And There is a team named "Team19" from "Igualada" with category "Challenge"
     When I register team "Team19" to the current edition
@@ -54,9 +58,28 @@ Feature: Team Edition Registration
   @Concurrency
   Scenario: Concurrent registrations beyond capacity return 409 instead of 500
     Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And The current edition is in state "OPEN"
     And The current edition already has 17 teams registered
     And There is a team named "RacerA" from "Igualada" with category "Challenge"
     And There is a team named "RacerB" from "Igualada" with category "Challenge"
     When I register teams "RacerA" and "RacerB" concurrently to the current edition
     Then One registration succeeds with code 201 and the other fails with code 409
 
+  @BusinessRules
+  Scenario: Cannot register a team when the edition is in DRAFT state
+    Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And There is a team named "LegoStars" from "Igualada" with category "Challenge"
+    When I register team "LegoStars" to the current edition
+    Then The response code is 422
+    And The response has error "EDITION_OPERATION_NOT_ALLOWED"
+    And The response has a non-empty message
+
+  @BusinessRules
+  Scenario: Cannot register a team when the edition is in CLOSED state
+    Given There is an edition with year 2025, venue "Igualada" and description "FLL 2025"
+    And The current edition is in state "CLOSED"
+    And There is a team named "LegoStars" from "Igualada" with category "Challenge"
+    When I register team "LegoStars" to the current edition
+    Then The response code is 422
+    And The response has error "EDITION_OPERATION_NOT_ALLOWED"
+    And The response has a non-empty message
