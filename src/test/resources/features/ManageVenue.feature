@@ -36,16 +36,20 @@ Feature: Manage Venue
 
     Scenario: Search venues by city returns matching results
         Given I login as "demo" with password "password"
+        And There are no venues with city "UniqueCitySearchVille"
         And There is no venue with name "City Search Venue"
-        And There is a venue with name "City Search Venue" and city "CitySearchVille"
-        When I search venues by city "CitySearchVille"
+        And There is a venue with name "City Search Venue" and city "UniqueCitySearchVille"
+        When I search venues by city "UniqueCitySearchVille"
         Then The response code is 200
+        And The venue search response has an embedded venues array
         And The venue search response should contain 1 venue
         And The venue search response should include venue named "City Search Venue"
+        And Each venue in the search response has id, name, city and self link
 
     Scenario: Search venues by city returns empty list when no match
         Given I login as "demo" with password "password"
-        When I search venues by city "NonExistentCity"
+        When I search venues by city "ZzNonExistentCityForVenueSearch"
         Then The response code is 200
+        And The venue search response has an embedded venues array
         And The venue search response should contain 0 venues
 
