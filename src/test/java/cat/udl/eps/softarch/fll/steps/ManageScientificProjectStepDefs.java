@@ -13,26 +13,45 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriUtils;
-import io.cucumber.java.en.Given;
+import cat.udl.eps.softarch.fll.domain.Edition;
+import cat.udl.eps.softarch.fll.domain.Team;
+import cat.udl.eps.softarch.fll.repository.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.TeamRepository;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class ManageScientificProjectStepDefs {
 
 	private final StepDefs stepDefs;
+	private final TeamRepository teamRepository;
+	private final EditionRepository editionRepository;
 	private String latestScientificProjectUri;
+	private Long trackedEditionId;
 
-	public ManageScientificProjectStepDefs(StepDefs stepDefs) {
+	public ManageScientificProjectStepDefs(
+			StepDefs stepDefs,
+			TeamRepository teamRepository,
+			EditionRepository editionRepository) {
 		this.stepDefs = stepDefs;
+		this.teamRepository = teamRepository;
+		this.editionRepository = editionRepository;
 	}
 
-	private ResultActions performCreateProject(Integer score, String comments, String teamUri, boolean includeTeam) throws Exception {
+	private ResultActions performCreateProject(
+			Integer score,
+			String comments,
+			String teamUri,
+			String editionUri) throws Exception {
 		JSONObject payload = new JSONObject();
 		payload.put("score", score);
 		payload.put("comments", comments);
-		if (includeTeam) {
+		if (teamUri != null) {
 			payload.put("team", teamUri);
+		}
+		if (editionUri != null) {
+			payload.put("edition", editionUri);
 		}
 
 		return stepDefs.mockMvc.perform(
@@ -69,39 +88,135 @@ public class ManageScientificProjectStepDefs {
 		throw new RuntimeException("Unable to create dependency team: " + response.getContentAsString());
 	}
 
-	@When("I create a new scientific project with score {int} and comments {string} for team {string}")
-	public void iCreateScientificProjectForTeam(Integer score, String comments, String teamName) throws Exception {
+	private String createEdition() throws Exception {
+		JSONObject editionJson = new JSONObject();
+		editionJson.put("year", 2026 + Math.floorMod(UUID.randomUUID().hashCode(), 100));
+		editionJson.put("venueName", "Venue-" + UUID.randomUUID().toString().substring(0, 8));
+		editionJson.put("description", "Edition for scientific project tests");
+
+		MockHttpServletResponse response = stepDefs.mockMvc.perform(
+				post("/editions")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(editionJson.toString())
+						.characterEncoding(StandardCharsets.UTF_8)
+						.accept(MediaType.APPLICATION_JSON)
+						.with(AuthenticationStepDefs.authenticate()))
+				.andReturn().getResponse();
+
+		if (response.getStatus() != 201) {
+			throw new RuntimeException("Unable to create dependency edition: " + response.getContentAsString());
+		}
+		return response.getHeader("Location");
+	}
+
+	private Long extractEditionId(String editionUri) {
+		if (editionUri == null) {
+			throw new IllegalArgumentException("editionUri must not be null");
+		}
+		String path = URI.create(editionUri).getPath();
+		String[] parts = path.split("/");
+		return Long.parseLong(parts[parts.length - 1]);
+	}
+
+	private String extractTeamName(String teamUri) {
+		if (teamUri == null) {
+			throw new IllegalArgumentException("teamUri must not be null");
+		}
+		String path = URI.create(teamUri).getPath();
+		String[] parts = path.split("/");
+		return UriUtils.decode(parts[parts.length - 1], StandardCharsets.UTF_8);
+	}
+
+	private void registerTeamInEdition(String teamUri, String editionUri) {
+		String teamName = extractTeamName(teamUri);
+		Long editionId = extractEditionId(editionUri);
+
+		Team team = teamRepository.findByNameWithRegisteredEditions(teamName)
+				.orElseThrow(() -> new IllegalStateException("Missing team in test setup: " + teamName));
+		Edition edition = editionRepository.findById(editionId)
+				.orElseThrow(() -> new IllegalStateException("Missing edition in test setup: " + editionId));
+
+		team.registerEdition(edition);
+		teamRepository.save(team);
+	}
+
+	private void captureLatestProjectUriIfCreated() throws Exception {
+		if (stepDefs.result.andReturn().getResponse().getStatus() == 201) {
+			latestScientificProjectUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
+		}
+	}
+
+	@When("I create a new scientific project with score {int} and comments {string} for team {string} and a valid edition")
+	public void iCreateScientificProjectForTeamAndValidEdition(Integer score, String comments, String teamName) throws Exception {
 		latestScientificProjectUri = null;
 		String teamUri = ensureTeamExists(teamName);
-		stepDefs.result = performCreateProject(score, comments, teamUri, true);
-		if (stepDefs.result.andReturn().getResponse().getStatus() == 201) {
-			latestScientificProjectUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
-		}
+		String editionUri = createEdition();
+		registerTeamInEdition(teamUri, editionUri);
+		stepDefs.result = performCreateProject(score, comments, teamUri, editionUri);
+		captureLatestProjectUriIfCreated();
 	}
 
-	@When("I create a new scientific project with score {int} and comments {string} without team")
-	public void iCreateScientificProjectWithoutTeam(Integer score, String comments) throws Exception {
+	@When("I create a new scientific project with score {int} and comments {string} without team and with valid edition")
+	public void iCreateScientificProjectWithoutTeamWithValidEdition(Integer score, String comments) throws Exception {
 		latestScientificProjectUri = null;
-		stepDefs.result = performCreateProject(score, comments, null, false);
-		if (stepDefs.result.andReturn().getResponse().getStatus() == 201) {
-			latestScientificProjectUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
-		}
+		String editionUri = createEdition();
+		stepDefs.result = performCreateProject(score, comments, null, editionUri);
+		captureLatestProjectUriIfCreated();
 	}
 
-	@When("I create a new scientific project with score {int} and comments {string} and invalid team")
-	public void iCreateScientificProjectWithInvalidTeam(Integer score, String comments) throws Exception {
+	@When("I create a new scientific project with score {int} and comments {string} without edition and with valid team {string}")
+	public void iCreateScientificProjectWithoutEditionWithValidTeam(Integer score, String comments, String teamName) throws Exception {
 		latestScientificProjectUri = null;
+		String teamUri = ensureTeamExists(teamName);
+		stepDefs.result = performCreateProject(score, comments, teamUri, null);
+		captureLatestProjectUriIfCreated();
+	}
+
+	@When("I create a new scientific project with score {int} and comments {string} and invalid team with valid edition")
+	public void iCreateScientificProjectWithInvalidTeamWithValidEdition(Integer score, String comments) throws Exception {
+		latestScientificProjectUri = null;
+		String editionUri = createEdition();
 		String invalidTeamUri = "non-existing-" + UUID.randomUUID();
-		stepDefs.result = performCreateProject(score, comments, invalidTeamUri, true);
-		if (stepDefs.result.andReturn().getResponse().getStatus() == 201) {
-			latestScientificProjectUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
-		}
+		stepDefs.result = performCreateProject(score, comments, invalidTeamUri, editionUri);
+		captureLatestProjectUriIfCreated();
 	}
 
-	@Given("There is a scientific project with score {int} and comments {string} for team {string}")
-	public void thereIsAScientificProjectForTeam(Integer score, String comments, String teamName) throws Exception {
+	@When("I create a new scientific project with score {int} and comments {string} and invalid edition for team {string}")
+	public void iCreateScientificProjectWithInvalidEdition(Integer score, String comments, String teamName) throws Exception {
+		latestScientificProjectUri = null;
 		String teamUri = ensureTeamExists(teamName);
-		ResultActions createAction = performCreateProject(score, comments, teamUri, true);
+		String invalidEditionUri = "non-existing-" + UUID.randomUUID();
+		stepDefs.result = performCreateProject(score, comments, teamUri, invalidEditionUri);
+		captureLatestProjectUriIfCreated();
+	}
+
+	@When("I create a new scientific project with score {int} and comments {string} for unregistered team {string}")
+	public void iCreateScientificProjectWithUnregisteredTeam(Integer score, String comments, String teamName) throws Exception {
+		latestScientificProjectUri = null;
+		String teamUri = ensureTeamExists(teamName);
+		String editionUri = createEdition();
+		stepDefs.result = performCreateProject(score, comments, teamUri, editionUri);
+		captureLatestProjectUriIfCreated();
+	}
+
+	@Given("There is a scientific project with score {int} and comments {string} for team {string} and a valid edition")
+	public void thereIsAScientificProjectForTeamAndEdition(Integer score, String comments, String teamName) throws Exception {
+		String teamUri = ensureTeamExists(teamName);
+		String editionUri = createEdition();
+		registerTeamInEdition(teamUri, editionUri);
+		ResultActions createAction = performCreateProject(score, comments, teamUri, editionUri);
+		createAction.andExpect(status().isCreated());
+		latestScientificProjectUri = createAction.andReturn().getResponse().getHeader("Location");
+	}
+
+	@Given("There is a scientific project with score {int} and comments {string} for team {string} in a tracked edition")
+	public void thereIsAScientificProjectInATrackedEdition(Integer score, String comments, String teamName) throws Exception {
+		trackedEditionId = null;
+		String teamUri = ensureTeamExists(teamName);
+		String editionUri = createEdition();
+		registerTeamInEdition(teamUri, editionUri);
+		trackedEditionId = extractEditionId(editionUri);
+		ResultActions createAction = performCreateProject(score, comments, teamUri, editionUri);
 		createAction.andExpect(status().isCreated());
 		latestScientificProjectUri = createAction.andReturn().getResponse().getHeader("Location");
 	}
@@ -124,6 +239,18 @@ public class ManageScientificProjectStepDefs {
 						.with(AuthenticationStepDefs.authenticate()));
 	}
 
+	@When("I search for scientific projects by the tracked edition")
+	public void iSearchScientificProjectsByTrackedEdition() throws Exception {
+		if (trackedEditionId == null) {
+			throw new IllegalStateException("No tracked edition is available in the current scenario.");
+		}
+		stepDefs.result = stepDefs.mockMvc.perform(
+				get("/scientificProjects/search/findByEditionId")
+						.param("editionId", trackedEditionId.toString())
+						.accept(MediaType.APPLICATION_JSON)
+						.with(AuthenticationStepDefs.authenticate()));
+	}
+
 	@When("I request the team of the latest scientific project")
 	public void iRequestTheTeamOfTheLatestScientificProject() throws Exception {
 		if (latestScientificProjectUri == null) {
@@ -136,14 +263,38 @@ public class ManageScientificProjectStepDefs {
 						.with(AuthenticationStepDefs.authenticate()));
 	}
 
+	@When("I request the edition of the latest scientific project")
+	public void iRequestTheEditionOfTheLatestScientificProject() throws Exception {
+		if (latestScientificProjectUri == null) {
+			throw new IllegalStateException("No scientific project URI is available in the current scenario.");
+		}
+		String path = URI.create(latestScientificProjectUri).getPath() + "/edition";
+		stepDefs.result = stepDefs.mockMvc.perform(
+				get(path)
+						.accept(MediaType.APPLICATION_JSON)
+						.with(AuthenticationStepDefs.authenticate()));
+	}
+
 	@Then("The response has a team link")
 	public void theResponseHasATeamLink() throws Exception {
 		stepDefs.result.andExpect(jsonPath("$._links.team.href").exists());
 	}
 
+	@Then("The response has an edition link")
+	public void theResponseHasAnEditionLink() throws Exception {
+		stepDefs.result.andExpect(jsonPath("$._links.edition.href").exists());
+	}
+
 	@And("The latest scientific project has a team relation endpoint")
 	public void theLatestScientificProjectHasATeamRelationEndpoint() throws Exception {
 		iRequestTheTeamOfTheLatestScientificProject();
+		stepDefs.result.andExpect(status().isOk());
+		stepDefs.result.andExpect(jsonPath("$._links.self.href").exists());
+	}
+
+	@And("The latest scientific project has an edition relation endpoint")
+	public void theLatestScientificProjectHasAnEditionRelationEndpoint() throws Exception {
+		iRequestTheEditionOfTheLatestScientificProject();
 		stepDefs.result.andExpect(status().isOk());
 		stepDefs.result.andExpect(jsonPath("$._links.self.href").exists());
 	}

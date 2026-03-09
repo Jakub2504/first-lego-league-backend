@@ -16,6 +16,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -114,6 +116,31 @@ public class Team extends UriEntity<String> {
 		member.setTeam(this);
 	}
 
+	@ManyToMany
+	@JoinTable(
+			name = "team_edition",
+			joinColumns = @JoinColumn(name = "team_name", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "edition_id"))
+	@JsonIdentityReference(alwaysAsId = true)
+	@ToString.Exclude
+	private Set<Edition> registeredEditions = new HashSet<>();
+
+	@ManyToMany
+	@JoinTable(
+			name = "team_coach",
+			joinColumns = @JoinColumn(name = "team_name"),
+			inverseJoinColumns = @JoinColumn(name = "coach_id"))
+	@ToString.Exclude
+	private Set<Coach> trainedBy = new HashSet<>();
+
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(
+			name = "team_floaters",
+			joinColumns = @JoinColumn(name = "team_name"),
+			inverseJoinColumns = @JoinColumn(name = "floater_id"))
+	@ToString.Exclude
+	private Set<Floater> floaters = new HashSet<>();
+
 	public void addFloater(Floater floater) {
 		if (floaters.contains(floater)) {
 			return;
@@ -131,6 +158,12 @@ public class Team extends UriEntity<String> {
 		}
 		floaters.remove(floater);
 		floater.getAssistedTeams().remove(this);
+	}
+
+	public void registerEdition(Edition edition) {
+		if (edition != null) {
+			registeredEditions.add(edition);
+		}
 	}
 
 	public void addCoach(Coach coach) {

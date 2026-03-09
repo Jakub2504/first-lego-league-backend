@@ -40,5 +40,11 @@ public class ScientificProject extends UriEntity<Long> {
 		project.score = score;
 		return project;
 	}
+  
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "edition_id", nullable = false)
+	@JsonIdentityReference(alwaysAsId = true)
+	private Edition edition;
 }
 

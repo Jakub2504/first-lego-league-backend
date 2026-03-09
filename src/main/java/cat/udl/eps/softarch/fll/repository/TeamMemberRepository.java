@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import cat.udl.eps.softarch.fll.domain.TeamMember;
 
-@RepositoryRestResource(path = "members")
+@RepositoryRestResource(path = "teamMembers")
 public interface TeamMemberRepository extends CrudRepository<TeamMember, Long>, PagingAndSortingRepository<TeamMember, Long> {
 	List<TeamMember> findByName(@Param("name") String name);
 }

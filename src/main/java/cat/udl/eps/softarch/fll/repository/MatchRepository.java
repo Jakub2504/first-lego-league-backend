@@ -3,6 +3,7 @@ package cat.udl.eps.softarch.fll.repository;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -18,8 +19,12 @@ import jakarta.persistence.LockModeType;
 
 @Repository
 @RepositoryRestResource
-public interface MatchRepository extends CrudRepository<Match, Long>, PagingAndSortingRepository<Match, Long> {
-	@Query("""
+public interface MatchRepository extends
+	CrudRepository<Match, Long>,
+	PagingAndSortingRepository<Match, Long>,
+	JpaSpecificationExecutor<Match> {
+
+@Query("""
 			SELECT m FROM Match m
 			WHERE m.referee = :referee
 			AND m.startTime < :newMatchEndTime
@@ -50,4 +55,17 @@ public interface MatchRepository extends CrudRepository<Match, Long>, PagingAndS
 	@Query("SELECT m FROM Match m WHERE m.id = :id")
 	@RestResource(exported = false)
 	Optional<Match> findByIdForUpdate(@Param("id") Long id);
+
+	@Query("""
+			SELECT m FROM Match m
+			WHERE m.competitionTable.id = :tableId
+			AND m.startTime < :newEndTime
+			AND m.endTime > :newStartTime
+			AND (:currentMatchId IS NULL OR m.id <> :currentMatchId)
+			""")
+	List<Match> findOverlappingMatchesByTable(
+			@Param("tableId") String tableId,
+			@Param("newStartTime") LocalTime newStartTime,
+			@Param("newEndTime") LocalTime newEndTime,
+			@Param("currentMatchId") Long currentMatchId);
 }

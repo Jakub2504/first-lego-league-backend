@@ -14,5 +14,7 @@ public interface ScientificProjectRepository extends CrudRepository<ScientificPr
 	List<ScientificProject> findByScoreGreaterThanEqual(@Param("minScore") Integer minScore);
 
 	List<ScientificProject> findByTeamName(@Param("teamName") String teamName);
+
+	List<ScientificProject> findByEditionId(@Param("editionId") Long editionId);
 }
 
