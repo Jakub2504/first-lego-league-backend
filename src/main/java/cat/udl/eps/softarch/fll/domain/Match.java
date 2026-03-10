@@ -12,11 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "matches")
+@Getter
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class Match extends UriEntity<Long> {
 
 	@Id

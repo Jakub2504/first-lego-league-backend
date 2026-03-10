@@ -4,6 +4,7 @@ import cat.udl.eps.softarch.fll.controller.dto.EditionVolunteersResponse;
 import cat.udl.eps.softarch.fll.domain.Floater;
 import cat.udl.eps.softarch.fll.domain.Judge;
 import cat.udl.eps.softarch.fll.domain.Referee;
+import cat.udl.eps.softarch.fll.exception.EditionVolunteerException;
 import cat.udl.eps.softarch.fll.repository.EditionRepository;
 import cat.udl.eps.softarch.fll.repository.FloaterRepository;
 import cat.udl.eps.softarch.fll.repository.JudgeRepository;
@@ -97,11 +98,12 @@ class EditionVolunteerServiceTest {
 	void getVolunteersGroupedByTypeThrowsWhenEditionDoesNotExist() {
 		when(editionRepository.existsById(99L)).thenReturn(false);
 
-		NoSuchElementException exception = assertThrows(
-			NoSuchElementException.class,
+		EditionVolunteerException exception = assertThrows(
+			EditionVolunteerException.class,
 			() -> editionVolunteerService.getVolunteersGroupedByType(99L));
 
-		assertEquals("EDITION_NOT_FOUND", exception.getMessage());
+		assertEquals("EDITION_NOT_FOUND", exception.getErrorCode());
+		assertEquals("Edition with id 99 not found", exception.getMessage());
 		verifyNoInteractions(refereeRepository, judgeRepository, floaterRepository);
 	}
 }

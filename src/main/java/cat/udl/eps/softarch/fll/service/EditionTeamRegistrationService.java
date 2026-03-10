@@ -3,7 +3,9 @@ package cat.udl.eps.softarch.fll.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.fll.domain.Edition;
+import cat.udl.eps.softarch.fll.domain.EditionOperation;
 import cat.udl.eps.softarch.fll.domain.Team;
+import cat.udl.eps.softarch.fll.exception.EditionLifecycleException;
 import cat.udl.eps.softarch.fll.exception.EditionTeamRegistrationException;
 import cat.udl.eps.softarch.fll.repository.EditionRepository;
 import cat.udl.eps.softarch.fll.repository.TeamRepository;
@@ -13,10 +15,14 @@ public class EditionTeamRegistrationService {
 
 	private final EditionRepository editionRepository;
 	private final TeamRepository teamRepository;
+	private final EditionLifecycleService editionLifecycleService;
 
-	public EditionTeamRegistrationService(EditionRepository editionRepository, TeamRepository teamRepository) {
+	public EditionTeamRegistrationService(EditionRepository editionRepository,
+			TeamRepository teamRepository,
+			EditionLifecycleService editionLifecycleService) {
 		this.editionRepository = editionRepository;
 		this.teamRepository = teamRepository;
+		this.editionLifecycleService = editionLifecycleService;
 	}
 
 	@Transactional
@@ -24,6 +30,12 @@ public class EditionTeamRegistrationService {
 		Edition edition = editionRepository.findByIdForUpdate(editionId)
 				.orElseThrow(() -> new EditionTeamRegistrationException(
 						"EDITION_NOT_FOUND", "Edition with id " + editionId + " not found"));
+
+		try {
+			editionLifecycleService.assertOperationAllowed(edition, EditionOperation.TEAM_REGISTRATION);
+		} catch (EditionLifecycleException exception) {
+			throw new EditionTeamRegistrationException(exception.getError(), exception.getMessage(), exception);
+		}
 
 		Team team = teamRepository.findById(teamId)
 				.orElseThrow(() -> new EditionTeamRegistrationException(
@@ -44,4 +56,3 @@ public class EditionTeamRegistrationService {
 		return editionRepository.save(edition);
 	}
 }
-

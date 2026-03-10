@@ -11,5 +11,9 @@ public class EditionTeamRegistrationException extends RuntimeException {
 		super(message);
 		this.error = error;
 	}
-}
 
+	public EditionTeamRegistrationException(String error, String message, Throwable cause) {
+		super(message, cause);
+		this.error = error;
+	}
+}

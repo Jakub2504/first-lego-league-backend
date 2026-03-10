@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import io.cucumber.java.en.Then;
 
 public class MatchScoreRegistrationStepDefs {
 
@@ -121,6 +122,14 @@ public class MatchScoreRegistrationStepDefs {
 			.andExpect(jsonPath("$.matchId").value(match.getId()))
 			.andExpect(jsonPath("$.resultSaved").value(true))
 			.andExpect(jsonPath("$.rankingUpdated").value(true));
+	}
+
+	@Then("^The match score error response has code \"([^\"]*)\"$")
+	public void theMatchScoreErrorResponseHasCode(String errorCode) throws Throwable {
+		stepDefs.result
+				.andExpect(jsonPath("$.error").value(errorCode))
+				.andExpect(jsonPath("$.timestamp").exists())
+				.andExpect(jsonPath("$.path").value("/matchResults/register"));
 	}
 
 	private void postRegisterScorePayload(Long matchId, String payloadTeamAId, String payloadTeamBId, int payloadTeamAScore, int payloadTeamBScore)
