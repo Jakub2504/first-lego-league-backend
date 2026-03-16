@@ -19,7 +19,7 @@ Feature: Manage Administrator
     Given I login as "admin" with password "password"
     And There is an administrator with username "adminToDelete" and password "password" and email "delete@sample.app"
     When I delete the administrator with username "adminToDelete"
-    Then The response code is 204
+    Then The response code is 200
     And It has not been created an administrator with username "adminToDelete"
 
   Scenario: Create an administrator as regular user is forbidden

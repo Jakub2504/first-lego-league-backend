@@ -3,6 +3,7 @@ package cat.udl.eps.softarch.fll.steps;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -93,5 +94,31 @@ public class ManageAdministratorStepDefs {
 		admin.setPassword(password);
 		admin.encodePassword();
 		administratorRepository.save(admin);
+	}
+
+	@When("I update the administrator with username {string} with new email {string}")
+	public void iUpdateTheAdministratorWithUsernameWithNewEmail(String username, String newEmail) throws Exception {
+		JSONObject payload = new JSONObject();
+		payload.put("email", newEmail);
+
+		stepDefs.result = stepDefs.mockMvc.perform(
+				patch("/administrators/{username}", username)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(payload.toString())
+						.characterEncoding(StandardCharsets.UTF_8)
+						.accept(MediaType.APPLICATION_JSON)
+						.with(AuthenticationStepDefs.authenticate()))
+				.andDo(print());
+	}
+
+	@io.cucumber.java.en.Then("It has been updated an administrator with username {string} and email {string}")
+	public void itHasBeenUpdatedAnAdministratorWithUsernameAndEmail(String username, String expectedEmail) throws Exception {
+		stepDefs.result = stepDefs.mockMvc.perform(
+				get("/administrators/{username}", username)
+						.accept(MediaType.APPLICATION_JSON)
+						.with(AuthenticationStepDefs.authenticate()))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.email", is(expectedEmail)));
 	}
 }

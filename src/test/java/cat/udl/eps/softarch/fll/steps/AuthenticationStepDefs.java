@@ -5,6 +5,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 
 public class AuthenticationStepDefs {
 
@@ -30,6 +31,11 @@ public class AuthenticationStepDefs {
 
 	@Given("^I'm not logged in$")
 	public void iMNotLoggedIn() {
+		currentUsername = currentPassword = null;
+	}
+
+	@Then("^I logout$")
+	public void iLogout() {
 		currentUsername = currentPassword = null;
 	}
 }

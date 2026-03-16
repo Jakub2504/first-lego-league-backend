@@ -76,7 +76,7 @@ public class ManageScientificProjectStepDefs {
 						.content(teamJson.toString())
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate()))
+						.with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic("admin", "password")))
 				.andReturn().getResponse();
 
 		if (response.getStatus() == 201) {
@@ -100,7 +100,7 @@ public class ManageScientificProjectStepDefs {
 						.content(editionJson.toString())
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate()))
+						.with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic("admin", "password")))
 				.andReturn().getResponse();
 
 		if (response.getStatus() != 201) {
@@ -204,7 +204,13 @@ public class ManageScientificProjectStepDefs {
 		String teamUri = ensureTeamExists(teamName);
 		String editionUri = createEdition();
 		registerTeamInEdition(teamUri, editionUri);
-		ResultActions createAction = performCreateProject(score, comments, teamUri, editionUri);
+		ResultActions createAction = stepDefs.mockMvc.perform(
+				post("/scientificProjects")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new JSONObject().put("score", score).put("comments", comments).put("team", teamUri).put("edition", editionUri).toString())
+						.characterEncoding(StandardCharsets.UTF_8)
+						.accept(MediaType.APPLICATION_JSON)
+						.with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic("admin", "password")));
 		createAction.andExpect(status().isCreated());
 		latestScientificProjectUri = createAction.andReturn().getResponse().getHeader("Location");
 	}
@@ -216,7 +222,13 @@ public class ManageScientificProjectStepDefs {
 		String editionUri = createEdition();
 		registerTeamInEdition(teamUri, editionUri);
 		trackedEditionId = extractEditionId(editionUri);
-		ResultActions createAction = performCreateProject(score, comments, teamUri, editionUri);
+		ResultActions createAction = stepDefs.mockMvc.perform(
+				post("/scientificProjects")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new JSONObject().put("score", score).put("comments", comments).put("team", teamUri).put("edition", editionUri).toString())
+						.characterEncoding(StandardCharsets.UTF_8)
+						.accept(MediaType.APPLICATION_JSON)
+						.with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic("admin", "password")));
 		createAction.andExpect(status().isCreated());
 		latestScientificProjectUri = createAction.andReturn().getResponse().getHeader("Location");
 	}
