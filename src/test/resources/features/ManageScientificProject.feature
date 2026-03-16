@@ -55,7 +55,7 @@ Feature: Manage Scientific Project
 
     Scenario: Find scientific projects by minimum score
         Given There is a registered user with username "user" and password "password" and email "user@sample.app"
-        And I login as "admin" with password "password"
+        And I login as "user" with password "password"
         And There is a scientific project with score 90 and comments "Excellent research" for team "AlphaTeam" and a valid edition
         When I search for scientific projects with minimum score 85
         Then The response code is 200
@@ -63,7 +63,7 @@ Feature: Manage Scientific Project
 
     Scenario: Find scientific projects with minimum score returns no results
         Given There is a registered user with username "user" and password "password" and email "user@sample.app"
-        And I login as "admin" with password "password"
+        And I login as "user" with password "password"
         And There is a scientific project with score 70 and comments "Average work" for team "BetaTeam" and a valid edition
         When I search for scientific projects with minimum score 85
         Then The response code is 200
@@ -71,7 +71,7 @@ Feature: Manage Scientific Project
 
     Scenario: Find scientific projects by team name
         Given There is a registered user with username "user" and password "password" and email "user@sample.app"
-        And I login as "admin" with password "password"
+        And I login as "user" with password "password"
         And There is a scientific project with score 88 and comments "Robotics focus" for team "SearchTeam" and a valid edition
         And There is a scientific project with score 75 and comments "Another team project" for team "OtherTeam" and a valid edition
         When I search for scientific projects by team name "SearchTeam"
@@ -80,7 +80,7 @@ Feature: Manage Scientific Project
 
     Scenario: Find scientific projects by edition id
         Given There is a registered user with username "user" and password "password" and email "user@sample.app"
-        And I login as "admin" with password "password"
+        And I login as "user" with password "password"
         And There is a scientific project with score 91 and comments "Target edition project" for team "EditionSearchA" in a tracked edition
         And There is a scientific project with score 67 and comments "Other edition project" for team "EditionSearchB" and a valid edition
         When I search for scientific projects by the tracked edition

@@ -3,7 +3,7 @@ Feature: Manage Match Results
   I want to verify that the match results repository is exposed correctly
 
   Scenario: MatchResults endpoint is working
-    Given I login as "admin" with password "password"
+    Given I'm not logged in
     When I request the match results list
     Then The response code is 200
 

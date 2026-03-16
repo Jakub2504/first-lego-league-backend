@@ -6,7 +6,7 @@ Feature: TeamMember REST CRUD
     Background:
         Given the team member API system is empty
         And There is a registered user with username "user" and password "password" and email "user@sample.app"
-        And I login as "admin" with password "password"
+        And I login as "user" with password "password"
 
     Scenario: Successfully creating a team member linked to an existing team
         Given a team with name "AlphaTeam" exists for team member management

@@ -87,13 +87,11 @@ public class ManageAdministratorStepDefs {
 
 	@Given("There is an administrator with username {string} and password {string} and email {string}")
 	public void thereIsAnAdministrator(String username, String password, String email) {
-		if (!administratorRepository.existsById(username)) {
-			Administrator admin = new Administrator();
-			admin.setId(username);
-			admin.setEmail(email);
-			admin.setPassword(password);
-			admin.encodePassword();
-			administratorRepository.save(admin);
-		}
+		Administrator admin = administratorRepository.findById(username).orElseGet(Administrator::new);
+		admin.setId(username);
+		admin.setEmail(email);
+		admin.setPassword(password);
+		admin.encodePassword();
+		administratorRepository.save(admin);
 	}
 }

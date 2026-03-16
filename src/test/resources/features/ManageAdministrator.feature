@@ -19,7 +19,7 @@ Feature: Manage Administrator
     Given I login as "admin" with password "password"
     And There is an administrator with username "adminToDelete" and password "password" and email "delete@sample.app"
     When I delete the administrator with username "adminToDelete"
-    Then The response code is 200
+    Then The response code is 204
     And It has not been created an administrator with username "adminToDelete"
 
   Scenario: Create an administrator as regular user is forbidden
@@ -38,3 +38,11 @@ Feature: Manage Administrator
     And I login as "user" with password "password"
     When I delete the administrator with username "admin"
     Then The response code is 403
+
+  Scenario: Update an administrator as admin
+    Given I login as "admin" with password "password"
+    And There is an administrator with username "adminToUpdate" and password "password" and email "update@sample.app"
+    When I update the administrator with username "adminToUpdate" with new email "adminToUpdate@sample.app"
+    Then The response code is 200
+    And It has been updated an administrator with username "adminToUpdate" and email "adminToUpdate@sample.app"
+    
