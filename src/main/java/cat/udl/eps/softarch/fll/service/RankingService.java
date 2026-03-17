@@ -1,12 +1,12 @@
 package cat.udl.eps.softarch.fll.service;
 
-import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.fll.domain.MatchResult;
 import cat.udl.eps.softarch.fll.domain.Ranking;
 import cat.udl.eps.softarch.fll.repository.MatchResultRepository;
 import cat.udl.eps.softarch.fll.repository.RankingRepository;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RankingService {
@@ -15,9 +15,10 @@ public class RankingService {
 	private final RankingRepository rankingRepository;
 	private final RankingCalculator rankingCalculator;
 
-	public RankingService(MatchResultRepository matchResultRepository,
-						  RankingRepository rankingRepository,
-						  RankingCalculator rankingCalculator) {
+	public RankingService(
+		MatchResultRepository matchResultRepository,
+		RankingRepository rankingRepository,
+		RankingCalculator rankingCalculator) {
 		this.matchResultRepository = matchResultRepository;
 		this.rankingRepository = rankingRepository;
 		this.rankingCalculator = rankingCalculator;
