@@ -21,7 +21,7 @@ Feature: Manage Coach
     Scenario: Update a coach
         Given There is a coach with name "Sergio Gomez" and email "sergio@example.com"
         When I update the coach "sergio@example.com" with new phone "999888777"
-        Then The response code is 200
+        Then The response code is 204
         And The coach "sergio@example.com" has phone "999888777"
 
     Scenario: Delete a coach
