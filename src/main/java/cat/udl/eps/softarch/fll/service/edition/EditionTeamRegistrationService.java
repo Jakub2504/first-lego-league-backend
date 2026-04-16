@@ -41,6 +41,12 @@ public class EditionTeamRegistrationService {
 				.orElseThrow(() -> new EditionTeamRegistrationException(
 						"TEAM_NOT_FOUND", "Team with id " + teamId + " not found"));
 
+		if (team.getEdition() != null && !team.getEdition().getId().equals(editionId)) {
+			throw new EditionTeamRegistrationException(
+					"TEAM_ALREADY_IN_ANOTHER_EDITION",
+					"Team " + teamId + " is already registered in another edition");
+		}
+
 		if (edition.containsTeam(team)) {
 			throw new EditionTeamRegistrationException(
 					"TEAM_ALREADY_REGISTERED", "Team " + teamId + " is already registered in edition " + editionId);
