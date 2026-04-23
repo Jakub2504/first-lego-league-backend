@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.web.bind.annotation.RestController;
 
-@RepositoryRestController
+@RestController
 @RequiredArgsConstructor
 public class EditionSearchController {
 
 	private final EditionRepository editionRepository;
 
-	@GetMapping(value = "/editions", params = "venueName")
+	@GetMapping("/editions/search")
 	public ResponseEntity<Object> searchByVenueName(
 		@RequestParam(name = "venueName") String venueName
 	) {
-		List<Edition> editions = editionRepository.findByVenueNameContainingIgnoreCase(venueName);
+		 List<Edition> editions = editionRepository.findByVenueNameContainingIgnoreCase(venueName);
 		return ResponseEntity.ok(Map.of("_embedded", Map.of("editions", editions)));
 	}
 }

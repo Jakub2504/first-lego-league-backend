@@ -39,7 +39,7 @@ public class SearchEditionByVenueNameStepDefs {
 
 	@When("I search for an edition by venue name {string}")
 	public void i_search_for_an_edition_by_venue_name(String venueName) throws Exception {
-		stepDefs.result = stepDefs.mockMvc.perform(get("/editions")
+		stepDefs.result = stepDefs.mockMvc.perform(get("/editions/search")
 				.param("venueName", venueName)
 				.with(AuthenticationStepDefs.authenticate()));
 	}
