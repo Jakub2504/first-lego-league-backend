@@ -20,6 +20,8 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import io.cucumber.java.en.Then;
+import cat.udl.eps.softarch.fll.domain.match.MatchState;
+import org.assertj.core.api.Assertions;
 
 public class MatchScoreRegistrationStepDefs {
 
@@ -132,6 +134,12 @@ public class MatchScoreRegistrationStepDefs {
 				.andExpect(jsonPath("$.error").value(errorCode))
 				.andExpect(jsonPath("$.timestamp").exists())
 				.andExpect(jsonPath("$.path").value("/matchResults/register"));
+	}
+
+	@Then("^The match state should be FINISHED$")
+	public void theMatchStateShouldBeFinished() {
+		Match updatedMatch = matchRepository.findById(match.getId()).orElseThrow();
+		Assertions.assertThat(updatedMatch.getState()).isEqualTo(MatchState.FINISHED);
 	}
 
 	private void postRegisterScorePayload(Long matchId, String payloadTeamAId, String payloadTeamBId, int payloadTeamAScore, int payloadTeamBScore)

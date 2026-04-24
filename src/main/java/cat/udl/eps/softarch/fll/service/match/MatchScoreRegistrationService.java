@@ -12,6 +12,7 @@ import cat.udl.eps.softarch.fll.domain.team.Team;
 import cat.udl.eps.softarch.fll.repository.match.MatchRepository;
 import cat.udl.eps.softarch.fll.repository.match.MatchResultRepository;
 import cat.udl.eps.softarch.fll.service.ranking.RankingService;
+import cat.udl.eps.softarch.fll.domain.match.MatchState;
 
 @Service
 public class MatchScoreRegistrationService {
@@ -68,6 +69,8 @@ public class MatchScoreRegistrationService {
 				"A result has already been registered for this match");
 		}
 		rankingService.recalculateRanking();
+		match.setState(MatchState.FINISHED);
+		matchRepository.save(match);
 	}
 
 	private void validateRequestShape(Long matchId, String teamAId, String teamBId, Integer teamAScore, Integer teamBScore) {

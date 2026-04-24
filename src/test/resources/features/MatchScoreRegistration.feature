@@ -98,3 +98,11 @@ Feature: Register Match Score
     And There is a finished match ready for score registration
     When I try to create a match result directly with score 10
     Then The response code is 405
+
+  Scenario: Match state is set to FINISHED after score registration
+    Given There is a registered user with username "admin" and password "password" and email "score-user-12@sample.app"
+    And I login as "admin" with password "password"
+    And There is a finished match ready for score registration
+    When I register a final score of 120 for team A and 95 for team B
+    Then The response code is 200
+    And The match state should be FINISHED
