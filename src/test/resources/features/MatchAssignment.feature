@@ -108,3 +108,10 @@ Feature: Match referee assignment
 		And a round with overlapping scheduled matches exists from "10:00"-"11:00" and "10:30"-"11:30"
 		When I assign referees in batch for that round
 		Then The response code is 200
+
+	Scenario: Batch assignment rejects assigning the same referee to overlapping matches
+		Given a referee volunteer exists
+		And a round with overlapping scheduled matches exists from "10:00"-"11:00" and "10:30"-"11:30"
+		When I assign the same referee in batch to both matches
+		Then The response code is 409
+		And assignment error code is "BATCH_ASSIGNMENT_FAILED"
