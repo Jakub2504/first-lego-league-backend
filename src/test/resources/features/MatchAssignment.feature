@@ -95,3 +95,16 @@ Feature: Match referee assignment
 		When I assign referees in batch for round id "99999"
 		Then The response code is 404
 		And assignment error code is "ROUND_NOT_FOUND"
+
+	Scenario: Batch assignment succeeds when same referee is assigned to non-overlapping matches
+		Given a referee volunteer exists
+		And a round with two scheduled matches exists from "10:00"-"11:00" and "11:00"-"12:00"
+		When I assign the same referee in batch to both matches
+		Then The response code is 200
+
+	Scenario: Different referees can be assigned to overlapping matches in batch
+		Given a referee volunteer exists
+		And another referee volunteer exists
+		And a round with overlapping scheduled matches exists from "10:00"-"11:00" and "10:30"-"11:30"
+		When I assign referees in batch for that round
+		Then The response code is 200
