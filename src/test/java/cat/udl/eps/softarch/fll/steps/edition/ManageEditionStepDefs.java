@@ -15,7 +15,9 @@ import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
@@ -23,21 +25,24 @@ import io.cucumber.java.en.When;
 public class ManageEditionStepDefs {
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	public String editionUri;
 
-	public ManageEditionStepDefs(StepDefs stepDefs, EditionRepository editionRepository) {
+	public ManageEditionStepDefs(StepDefs stepDefs, EditionRepository editionRepository, VenueRepository venueRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 	}
 
 	@When("I create a new edition with year {int}, venue {string} and description {string}")
 	public void iCreateANewEdition(int year, String venue, String description) throws Exception {
-		Edition edition = Edition.create(year, venue, description);
+		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
 
 		stepDefs.result = stepDefs.mockMvc.perform(
 				post("/editions")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(stepDefs.mapper.writeValueAsString(edition))
+					.content(stepDefs.mapper.writeValueAsString(
+						Map.of("year", year, "description", description, "venue", "/venues/" + venueEntity.getId())))
 					.characterEncoding(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.with(AuthenticationStepDefs.authenticate()))
@@ -60,7 +65,8 @@ public class ManageEditionStepDefs {
 
 	@Given("There is an edition with year {int}, venue {string} and description {string}")
 	public void thereIsAnEdition(int year, String venue, String description) {
-		Edition edition = Edition.create(year, venue, description);
+		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
+		Edition edition = Edition.create(year, venueEntity, description);
 		edition = editionRepository.save(edition);
 		editionUri = "/editions/" + edition.getId();
 	}
@@ -76,10 +82,11 @@ public class ManageEditionStepDefs {
 
 	@When("I update the edition venue to {string}")
 	public void iUpdateTheEditionVenue(String venue) throws Exception {
+		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
 		stepDefs.result = stepDefs.mockMvc.perform(
 				patch(editionUri)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(stepDefs.mapper.writeValueAsString(Map.of("venueName", venue)))
+					.content(stepDefs.mapper.writeValueAsString(Map.of("venue", "/venues/" + venueEntity.getId())))
 					.characterEncoding(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.with(AuthenticationStepDefs.authenticate()))

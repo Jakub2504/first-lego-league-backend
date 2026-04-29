@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.fll.edition;
 
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.edition.EditionOperation;
 import cat.udl.eps.softarch.fll.domain.edition.EditionState;
 import cat.udl.eps.softarch.fll.exception.EditionLifecycleException;
@@ -32,7 +33,7 @@ class EditionLifecycleServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		edition = Edition.create(2026, "Test Edition", "description");
+		edition = Edition.create(2026, Venue.create("Test Arena", "Test City"), "description");
 		edition.setId(1L);
 		edition.setState(EditionState.DRAFT);
 	}

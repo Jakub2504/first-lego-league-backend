@@ -4,12 +4,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
+import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
-import org.springframework.http.MediaType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -17,24 +17,19 @@ import io.cucumber.java.en.When;
 public class SearchEditionByVenueNameStepDefs {
 
 	private final StepDefs stepDefs;
+	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 
-	public SearchEditionByVenueNameStepDefs(StepDefs stepDefs) {
+	public SearchEditionByVenueNameStepDefs(StepDefs stepDefs, EditionRepository editionRepository, VenueRepository venueRepository) {
 		this.stepDefs = stepDefs;
+		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
     }
 
 	@Given("an edition exists with year {int}, venue name {string} and description {string}")
-	public void an_edition_exists(int year, String venueName, String description) throws Exception {
-		Map<String, Object> body = new HashMap<>();
-		body.put("year", year);
-		body.put("venueName", venueName);
-		body.put("description", description);
-
-		stepDefs.mockMvc.perform(post("/editions")
-				.contentType(MediaType.APPLICATION_JSON)
- 				.content(stepDefs.mapper.writeValueAsString(body))
-				.characterEncoding(StandardCharsets.UTF_8)
-				.with(AuthenticationStepDefs.authenticate()))
-				.andExpect(status().isCreated());
+	public void an_edition_exists(int year, String venueName, String description) {
+		Venue venue = venueRepository.save(Venue.create(venueName, "Test City"));
+		editionRepository.save(Edition.create(year, venue, description));
 	}
 
 	@When("I search for an edition by venue name {string}")

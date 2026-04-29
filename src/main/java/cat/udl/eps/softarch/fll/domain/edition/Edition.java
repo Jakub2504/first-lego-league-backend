@@ -10,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,8 +37,10 @@ public class Edition extends UriEntity<Long> {
 	@Column(name = "edition_year")
 	private Integer year;
 
-	@NotBlank
-	private String venueName;
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "venue_id", nullable = false)
+	private Venue venue;
 
 	@NotBlank
 	private String description;
@@ -55,14 +59,24 @@ public class Edition extends UriEntity<Long> {
 	protected Edition() {
 	}
 
-	public static Edition create(Integer year, String venueName, String description) {
+	@JsonProperty("venueName")
+	public String getVenueName() {
+		return venue != null ? venue.getName() : null;
+	}
+
+	@JsonProperty("venueCity")
+	public String getVenueCity() {
+		return venue != null ? venue.getCity() : null;
+	}
+
+	public static Edition create(Integer year, Venue venue, String description) {
 		DomainValidation.requireNonNull(year, "year");
-		DomainValidation.requireNonBlank(venueName, "venueName");
+		DomainValidation.requireNonNull(venue, "venue");
 		DomainValidation.requireNonBlank(description, "description");
 
 		Edition edition = new Edition();
 		edition.year = year;
-		edition.venueName = venueName;
+		edition.venue = venue;
 		edition.description = description;
 		return edition;
 	}

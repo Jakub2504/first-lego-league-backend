@@ -22,8 +22,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
 import cat.udl.eps.softarch.fll.domain.edition.EditionState;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.team.Team;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.team.TeamRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -35,6 +37,7 @@ public class TeamEditionRegistrationStepDefs {
 	private final StepDefs stepDefs;
 	private final ManageEditionStepDefs manageEditionStepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private final TeamRepository teamRepository;
 
 	private List<Integer> concurrentResponseCodes;
@@ -42,10 +45,12 @@ public class TeamEditionRegistrationStepDefs {
 	public TeamEditionRegistrationStepDefs(StepDefs stepDefs,
 										   ManageEditionStepDefs manageEditionStepDefs,
 										   EditionRepository editionRepository,
+										   VenueRepository venueRepository,
 										   TeamRepository teamRepository) {
 		this.stepDefs = stepDefs;
 		this.manageEditionStepDefs = manageEditionStepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 		this.teamRepository = teamRepository;
 	}
 
@@ -149,7 +154,8 @@ public class TeamEditionRegistrationStepDefs {
 	@Given("Team {string} is already registered in another edition")
 	@Transactional
 	public void teamIsAlreadyRegisteredInAnotherEdition(String teamName) {
-		Edition otherEdition = Edition.create(2024, "Barcelona", "FLL 2024");
+		Venue venue = venueRepository.save(Venue.create("Barcelona", "Barcelona"));
+		Edition otherEdition = Edition.create(2024, venue, "FLL 2024");
 		otherEdition = editionRepository.save(otherEdition);
 		Team team = teamRepository.findById(teamName).orElseThrow();
 		team.setEdition(otherEdition);

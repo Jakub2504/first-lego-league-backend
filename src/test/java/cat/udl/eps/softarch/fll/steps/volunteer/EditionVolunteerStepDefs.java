@@ -10,10 +10,12 @@ import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.volunteer.Floater;
 import cat.udl.eps.softarch.fll.domain.volunteer.Judge;
 import cat.udl.eps.softarch.fll.domain.volunteer.Referee;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.volunteer.FloaterRepository;
 import cat.udl.eps.softarch.fll.repository.volunteer.JudgeRepository;
 import cat.udl.eps.softarch.fll.repository.volunteer.RefereeRepository;
@@ -25,6 +27,7 @@ public class EditionVolunteerStepDefs {
 
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private final RefereeRepository refereeRepository;
 	private final JudgeRepository judgeRepository;
 	private final FloaterRepository floaterRepository;
@@ -37,11 +40,13 @@ public class EditionVolunteerStepDefs {
 	public EditionVolunteerStepDefs(
 		StepDefs stepDefs,
 		EditionRepository editionRepository,
+		VenueRepository venueRepository,
 		RefereeRepository refereeRepository,
 		JudgeRepository judgeRepository,
 		FloaterRepository floaterRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 		this.refereeRepository = refereeRepository;
 		this.judgeRepository = judgeRepository;
 		this.floaterRepository = floaterRepository;
@@ -128,7 +133,8 @@ public class EditionVolunteerStepDefs {
 	}
 
 	private Edition createEdition(String venueName, String description) {
-		Edition edition = Edition.create(2026, venueName + " " + UUID.randomUUID(), description);
+		Venue venue = venueRepository.save(Venue.create(venueName + " " + UUID.randomUUID(), "Test City"));
+		Edition edition = Edition.create(2026, venue, description);
 		return editionRepository.save(edition);
 	}
 }

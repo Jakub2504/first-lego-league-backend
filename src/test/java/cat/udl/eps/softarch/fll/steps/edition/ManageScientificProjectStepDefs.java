@@ -16,8 +16,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriUtils;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.team.Team;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.team.TeamRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -29,16 +31,19 @@ public class ManageScientificProjectStepDefs {
 	private final StepDefs stepDefs;
 	private final TeamRepository teamRepository;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private String latestScientificProjectUri;
 	private Long trackedEditionId;
 
 	public ManageScientificProjectStepDefs(
 			StepDefs stepDefs,
 			TeamRepository teamRepository,
-			EditionRepository editionRepository) {
+			EditionRepository editionRepository,
+			VenueRepository venueRepository) {
 		this.stepDefs = stepDefs;
 		this.teamRepository = teamRepository;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 	}
 
 	private ResultActions performCreateProject(
@@ -93,9 +98,11 @@ public class ManageScientificProjectStepDefs {
 	}
 
 	private String createEdition() throws Exception {
+		Venue venue = venueRepository.save(Venue.create("Venue-" + UUID.randomUUID().toString().substring(0, 8), "Test City"));
+
 		JSONObject editionJson = new JSONObject();
 		editionJson.put("year", 2026 + Math.floorMod(UUID.randomUUID().hashCode(), 100));
-		editionJson.put("venueName", "Venue-" + UUID.randomUUID().toString().substring(0, 8));
+		editionJson.put("venue", "/venues/" + venue.getId());
 		editionJson.put("description", "Edition for scientific project tests");
 
 		MockHttpServletResponse response = stepDefs.mockMvc.perform(

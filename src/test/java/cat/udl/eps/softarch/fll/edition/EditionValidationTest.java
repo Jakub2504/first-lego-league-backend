@@ -5,14 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import cat.udl.eps.softarch.fll.domain.DomainValidationException;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class EditionValidationTest {
 
+	private static final Venue VALID_VENUE = Venue.create("Lleida Arena", "Lleida");
+
 	@Test
 	void validConstruction() {
-		assertDoesNotThrow(() -> Edition.create(2024, "Lleida Arena", "FLL Season"));
+		assertDoesNotThrow(() -> Edition.create(2024, VALID_VENUE, "FLL Season"));
 	}
 
 	@Nested
@@ -21,7 +24,13 @@ class EditionValidationTest {
 		@Test
 		void nullYearThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Edition.create(null, "Lleida Arena", "FLL Season"));
+					() -> Edition.create(null, VALID_VENUE, "FLL Season"));
+		}
+
+		@Test
+		void nullVenueThrows() {
+			assertThrows(DomainValidationException.class,
+					() -> Edition.create(2024, null, "FLL Season"));
 		}
 	}
 
@@ -29,21 +38,9 @@ class EditionValidationTest {
 	class EmptyName {
 
 		@Test
-		void blankVenueNameThrows() {
-			assertThrows(DomainValidationException.class,
-					() -> Edition.create(2024, "  ", "FLL Season"));
-		}
-
-		@Test
-		void nullVenueNameThrows() {
-			assertThrows(DomainValidationException.class,
-					() -> Edition.create(2024, null, "FLL Season"));
-		}
-
-		@Test
 		void blankDescriptionThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Edition.create(2024, "Lleida Arena", ""));
+					() -> Edition.create(2024, VALID_VENUE, ""));
 		}
 	}
 }
