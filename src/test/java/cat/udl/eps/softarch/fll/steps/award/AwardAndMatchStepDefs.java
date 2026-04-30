@@ -41,7 +41,7 @@ public class AwardAndMatchStepDefs {
 	public void theDependenciesExist() throws Throwable {
 		String suffix = UUID.randomUUID().toString().substring(0, 8);
 
-		Venue venue = venueRepository.save(Venue.create("EPS Igualada", "Igualada"));
+		Venue venue = venueRepository.findByName("EPS Igualada").orElseGet(() -> venueRepository.save(Venue.create("EPS Igualada", "Igualada")));
 
 		JSONObject editionJson = new JSONObject();
 		editionJson.put("year", 2025 + Math.abs(suffix.hashCode() % 100));
@@ -151,7 +151,7 @@ public class AwardAndMatchStepDefs {
 	public void aTeamExistsWithNameAndAnAward(String teamName, String awardName) throws Throwable {
 		String suffix = UUID.randomUUID().toString().substring(0, 8);
 
-		Venue venue2 = venueRepository.save(Venue.create("EPS Igualada", "Igualada"));
+		Venue venue2 = venueRepository.findByName("EPS Igualada").orElseGet(() -> venueRepository.save(Venue.create("EPS Igualada", "Igualada")));
 
 		JSONObject editionJson = new JSONObject();
 		editionJson.put("year", 2025 + Math.abs(suffix.hashCode() % 100));

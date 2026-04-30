@@ -34,9 +34,13 @@ public class ManageEditionStepDefs {
 		this.venueRepository = venueRepository;
 	}
 
+	private Venue findOrCreateVenue(String name) {
+		return venueRepository.findByName(name).orElseGet(() -> venueRepository.save(Venue.create(name, "Test City")));
+	}
+
 	@When("I create a new edition with year {int}, venue {string} and description {string}")
 	public void iCreateANewEdition(int year, String venue, String description) throws Exception {
-		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
+		Venue venueEntity = findOrCreateVenue(venue);
 
 		stepDefs.result = stepDefs.mockMvc.perform(
 				post("/editions")
@@ -60,12 +64,13 @@ public class ManageEditionStepDefs {
 			.andDo(print())
 			.andExpect(jsonPath("$.year", is(year)))
 			.andExpect(jsonPath("$.venueName", is(venue)))
+			.andExpect(jsonPath("$.venueCity").exists())
 			.andExpect(jsonPath("$.description", is(description)));
 	}
 
 	@Given("There is an edition with year {int}, venue {string} and description {string}")
 	public void thereIsAnEdition(int year, String venue, String description) {
-		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
+		Venue venueEntity = findOrCreateVenue(venue);
 		Edition edition = Edition.create(year, venueEntity, description);
 		edition = editionRepository.save(edition);
 		editionUri = "/editions/" + edition.getId();
@@ -82,7 +87,7 @@ public class ManageEditionStepDefs {
 
 	@When("I update the edition venue to {string}")
 	public void iUpdateTheEditionVenue(String venue) throws Exception {
-		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
+		Venue venueEntity = findOrCreateVenue(venue);
 		stepDefs.result = stepDefs.mockMvc.perform(
 				patch(editionUri)
 					.contentType(MediaType.APPLICATION_JSON)

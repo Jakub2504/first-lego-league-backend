@@ -154,7 +154,7 @@ public class TeamEditionRegistrationStepDefs {
 	@Given("Team {string} is already registered in another edition")
 	@Transactional
 	public void teamIsAlreadyRegisteredInAnotherEdition(String teamName) {
-		Venue venue = venueRepository.save(Venue.create("Barcelona", "Barcelona"));
+		Venue venue = venueRepository.findByName("Barcelona").orElseGet(() -> venueRepository.save(Venue.create("Barcelona", "Barcelona")));
 		Edition otherEdition = Edition.create(2024, venue, "FLL 2024");
 		otherEdition = editionRepository.save(otherEdition);
 		Team team = teamRepository.findById(teamName).orElseThrow();

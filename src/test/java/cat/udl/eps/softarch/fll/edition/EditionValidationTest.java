@@ -35,7 +35,7 @@ class EditionValidationTest {
 	}
 
 	@Nested
-	class EmptyName {
+	class EmptyDescription {
 
 		@Test
 		void blankDescriptionThrows() {

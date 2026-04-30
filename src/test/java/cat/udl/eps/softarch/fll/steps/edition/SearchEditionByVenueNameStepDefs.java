@@ -28,7 +28,7 @@ public class SearchEditionByVenueNameStepDefs {
 
 	@Given("an edition exists with year {int}, venue name {string} and description {string}")
 	public void an_edition_exists(int year, String venueName, String description) {
-		Venue venue = venueRepository.save(Venue.create(venueName, "Test City"));
+		Venue venue = venueRepository.findByName(venueName).orElseGet(() -> venueRepository.save(Venue.create(venueName, "Test City")));
 		editionRepository.save(Edition.create(year, venue, description));
 	}
 
