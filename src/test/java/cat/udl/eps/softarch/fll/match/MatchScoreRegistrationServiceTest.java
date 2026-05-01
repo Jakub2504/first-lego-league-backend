@@ -202,6 +202,50 @@ class MatchScoreRegistrationServiceTest {
 	}
 
 	@Test
+	void updateMatchResultScoreShouldUpdateScoreAndRecalculateRanking() {
+		MatchResult result = MatchResult.create(50, match, match.getTeamA());
+		when(matchResultRepository.findById(1L)).thenReturn(Optional.of(result));
+		when(matchResultRepository.save(result)).thenReturn(result);
+
+		MatchResult updated = matchScoreRegistrationService.updateMatchResultScore(1L, 200);
+
+		assertEquals(200, updated.getScore());
+		verify(rankingService).recalculateRanking();
+	}
+
+	@Test
+	void updateMatchResultScoreShouldThrowResultNotFoundWhenIdDoesNotExist() {
+		when(matchResultRepository.findById(99L)).thenReturn(Optional.empty());
+
+		MatchScoreRegistrationService.RegistrationException ex = assertThrows(
+			MatchScoreRegistrationService.RegistrationException.class,
+			() -> matchScoreRegistrationService.updateMatchResultScore(99L, 100));
+
+		assertEquals(MatchScoreRegistrationService.ErrorCode.RESULT_NOT_FOUND, ex.getErrorCode());
+		verify(rankingService, never()).recalculateRanking();
+	}
+
+	@Test
+	void updateMatchResultScoreShouldThrowInvalidScoreWhenScoreIsNegative() {
+		MatchScoreRegistrationService.RegistrationException ex = assertThrows(
+			MatchScoreRegistrationService.RegistrationException.class,
+			() -> matchScoreRegistrationService.updateMatchResultScore(1L, -5));
+
+		assertEquals(MatchScoreRegistrationService.ErrorCode.INVALID_SCORE, ex.getErrorCode());
+		verify(rankingService, never()).recalculateRanking();
+	}
+
+	@Test
+	void updateMatchResultScoreShouldThrowInvalidScorePayloadWhenScoreIsNull() {
+		MatchScoreRegistrationService.RegistrationException ex = assertThrows(
+			MatchScoreRegistrationService.RegistrationException.class,
+			() -> matchScoreRegistrationService.updateMatchResultScore(1L, null));
+
+		assertEquals(MatchScoreRegistrationService.ErrorCode.INVALID_SCORE_PAYLOAD, ex.getErrorCode());
+		verify(rankingService, never()).recalculateRanking();
+	}
+
+	@Test
 	void registerMatchScoreShouldSupportSwappedTeamOrderInInputPayload() {
 		teamAId = "Team-B";
 		teamBId = "Team-A";

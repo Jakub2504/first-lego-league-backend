@@ -5,11 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import cat.udl.eps.softarch.fll.controller.dto.ApiErrorResponse;
+import cat.udl.eps.softarch.fll.domain.match.MatchResult;
 import cat.udl.eps.softarch.fll.service.match.MatchScoreRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +48,15 @@ public class MatchScoreRegistrationController {
 		return new RegisterMatchScoreResponse(matchId, true, true);
 	}
 
+	@PatchMapping("/{id}")
+	@Operation(summary = "Update the score of a match result and recalculate ranking")
+	public ResponseEntity<MatchResult> updateMatchResultScore(
+		@PathVariable Long id,
+		@RequestBody UpdateMatchResultRequest request) {
+		MatchResult updated = matchScoreRegistrationService.updateMatchResultScore(id, request.score());
+		return ResponseEntity.ok(updated);
+	}
+
 	@ExceptionHandler(MatchScoreRegistrationService.RegistrationException.class)
 	public ResponseEntity<ApiErrorResponse> handleRegistrationError(
 		MatchScoreRegistrationService.RegistrationException ex,
@@ -69,5 +81,8 @@ public class MatchScoreRegistrationController {
 	}
 
 	public record RegisterMatchScoreResponse(Long matchId, boolean resultSaved, boolean rankingUpdated) {
+	}
+
+	public record UpdateMatchResultRequest(Integer score) {
 	}
 }

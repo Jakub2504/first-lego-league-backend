@@ -135,8 +135,27 @@ public class MatchScoreRegistrationService {
 		return MatchResult.create(score, match, team);
 	}
 
+	@Transactional
+	public MatchResult updateMatchResultScore(Long id, Integer score) {
+		if (score == null) {
+			throw new RegistrationException(ErrorCode.INVALID_SCORE_PAYLOAD, "Score is required");
+		}
+		if (score < 0) {
+			throw new RegistrationException(ErrorCode.INVALID_SCORE, "Score cannot be negative");
+		}
+		MatchResult result = matchResultRepository.findById(id)
+			.orElseThrow(() -> new RegistrationException(
+				ErrorCode.RESULT_NOT_FOUND,
+				"Match result with id " + id + " does not exist"));
+		result.setScore(score);
+		MatchResult saved = matchResultRepository.save(result);
+		rankingService.recalculateRanking();
+		return saved;
+	}
+
 	public enum ErrorCode {
 		MATCH_NOT_FOUND(HttpStatus.NOT_FOUND),
+		RESULT_NOT_FOUND(HttpStatus.NOT_FOUND),
 		INVALID_SCORE_PAYLOAD(HttpStatus.BAD_REQUEST),
 		INVALID_MATCH_STATE(HttpStatus.CONFLICT),
 		MATCH_NOT_FINISHED(HttpStatus.CONFLICT),
