@@ -2,7 +2,6 @@ package cat.udl.eps.softarch.fll.repository.edition;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -13,6 +12,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.LockModeType;
 
 @Tag(name = "Editions", description = "Repository for managing Edition entities")
 @RepositoryRestResource
@@ -29,10 +29,12 @@ public interface EditionRepository extends CrudRepository<Edition, Long>, Paging
 
 	@Operation(summary = "Search editions by venue name",
 			description = "Returns a list of Editions for the specified venue.")
-	List<Edition> findByVenue_Name(@Param("venueName") String venueName);
+	@Query("SELECT e FROM Edition e WHERE e.venue.name = :venueName")
+	List<Edition> findByVenueName(@Param("venueName") String venueName);
 
 	@Operation(summary = "Search editions by partial venue name",
 		description = "Returns a list of Editions whose venue name contains the given string (case-insensitive).")
-	List<Edition> findByVenue_NameContainingIgnoreCase(@Param("venueName") String venueName);
+	@Query("SELECT e FROM Edition e WHERE UPPER(e.venue.name) LIKE UPPER(CONCAT('%', :venueName, '%'))")
+	List<Edition> findByVenueNameContainingIgnoreCase(@Param("venueName") String venueName);
 
 }
