@@ -3,20 +3,18 @@ package cat.udl.eps.softarch.fll.steps.match;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.match.Round;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.match.RoundRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -26,34 +24,24 @@ public class RoundSearchByEditionStepDefs {
 
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private final RoundRepository roundRepository;
 
 	private Long currentEditionId;
 
 	public RoundSearchByEditionStepDefs(StepDefs stepDefs, EditionRepository editionRepository,
-			RoundRepository roundRepository) {
+			VenueRepository venueRepository, RoundRepository roundRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 		this.roundRepository = roundRepository;
 	}
 
 	@Given("An edition exists with year {int} and venue {string} and description {string}")
-	public void anEditionExistsWithYearAndVenueAndDescription(int year, String venue, String description)
-			throws Exception {
-		var body = Map.of("year", year, "venueName", venue, "description", description);
-		String location = stepDefs.mockMvc.perform(
-				post("/editions")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(stepDefs.mapper.writeValueAsString(body))
-						.characterEncoding(StandardCharsets.UTF_8)
-						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate()))
-				.andExpect(status().isCreated())
-				.andReturn().getResponse().getHeader("Location");
-		if (location == null) {
-			throw new IllegalStateException("Expected Location header after edition creation");
-		}
-		currentEditionId = Long.parseLong(location.substring(location.lastIndexOf('/') + 1));
+	public void anEditionExistsWithYearAndVenueAndDescription(int year, String venue, String description) {
+		Venue venueEntity = venueRepository.save(Venue.create(venue, "Test City"));
+		Edition edition = Edition.create(year, venueEntity, description);
+		currentEditionId = editionRepository.save(edition).getId();
 	}
 
 	@Given("A round with number {int} exists for that edition")

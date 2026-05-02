@@ -9,11 +9,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.match.CompetitionTable;
 import cat.udl.eps.softarch.fll.domain.match.Match;
 import cat.udl.eps.softarch.fll.domain.match.Round;
 import cat.udl.eps.softarch.fll.domain.team.Team;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.match.CompetitionTableRepository;
 import cat.udl.eps.softarch.fll.repository.match.MatchRepository;
 import cat.udl.eps.softarch.fll.repository.match.RoundRepository;
@@ -31,6 +33,7 @@ public class EditionMatchStepDefs {
 
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private final TeamRepository teamRepository;
 	private final MatchRepository matchRepository;
 	private final RoundRepository roundRepository;
@@ -40,12 +43,14 @@ public class EditionMatchStepDefs {
 
 	public EditionMatchStepDefs(StepDefs stepDefs,
 			EditionRepository editionRepository,
+			VenueRepository venueRepository,
 			TeamRepository teamRepository,
 			MatchRepository matchRepository,
 			RoundRepository roundRepository,
 			CompetitionTableRepository tableRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 		this.teamRepository = teamRepository;
 		this.matchRepository = matchRepository;
 		this.roundRepository = roundRepository;
@@ -64,7 +69,8 @@ public class EditionMatchStepDefs {
 
 	@Given("There is an edition with id for matches")
 	public void thereIsAnEditionWithIdForMatches() {
-		Edition edition = Edition.create(2025, "TestVenue", "Test edition for matches");
+		Venue venue = venueRepository.findByName("TestVenue").orElseGet(() -> venueRepository.save(Venue.create("TestVenue", "Test City")));
+		Edition edition = Edition.create(2025, venue, "Test edition for matches");
 		edition = editionRepository.save(edition);
 		currentEditionId = edition.getId();
 	}

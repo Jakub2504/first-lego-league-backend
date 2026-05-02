@@ -3,6 +3,7 @@ package cat.udl.eps.softarch.fll.award;
 import cat.udl.eps.softarch.fll.domain.ranking.Award;
 import cat.udl.eps.softarch.fll.domain.DomainValidationException;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.team.Team;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AwardValidationTest {
 
-	private final Edition validEdition = Edition.create(2024, "Lleida Arena", "FLL Season");
+	private final Edition validEdition = Edition.create(2024, Venue.create("Lleida Arena", "Lleida"), "FLL Season");
 	private final Team validTeam = Team.create("Winners", "Barcelona", 2000, "category");
 
 	@Test

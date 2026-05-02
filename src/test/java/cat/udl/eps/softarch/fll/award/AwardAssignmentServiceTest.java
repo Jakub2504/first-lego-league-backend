@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import cat.udl.eps.softarch.fll.domain.ranking.Award;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.team.Team;
 import cat.udl.eps.softarch.fll.dto.AssignAwardResponse;
 import cat.udl.eps.softarch.fll.exception.AwardAssignmentException;
@@ -42,7 +43,7 @@ class AwardAssignmentServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		edition = Edition.create(2026, "Igualada Arena", "FLL Season");
+		edition = Edition.create(2026, Venue.create("Igualada Arena", "Igualada"), "FLL Season");
 		edition.setId(11L);
 
 		team = Team.create("TeamA", "Igualada", 2000, "Junior");
@@ -106,7 +107,7 @@ class AwardAssignmentServiceTest {
 
 	@Test
 	void assignAwardShouldThrowEditionMismatchWhenTeamIsInDifferentEdition() {
-		Edition otherEdition = Edition.create(2025, "Other Arena", "FLL Season");
+		Edition otherEdition = Edition.create(2025, Venue.create("Other Arena", "Other City"), "FLL Season");
 		otherEdition.setId(12L);
 		team.setEdition(otherEdition);
 

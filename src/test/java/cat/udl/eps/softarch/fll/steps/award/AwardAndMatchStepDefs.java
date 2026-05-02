@@ -11,7 +11,9 @@ import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.match.Match;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.match.MatchRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,22 +26,26 @@ public class AwardAndMatchStepDefs {
 
 	private final StepDefs stepDefs;
 	private final MatchRepository matchRepository;
+	private final VenueRepository venueRepository;
 	private String teamUri;
 	private String editionUri;
 	private String matchUri;
 
-	public AwardAndMatchStepDefs(StepDefs stepDefs, MatchRepository matchRepository) {
+	public AwardAndMatchStepDefs(StepDefs stepDefs, MatchRepository matchRepository, VenueRepository venueRepository) {
 		this.stepDefs = stepDefs;
 		this.matchRepository = matchRepository;
+		this.venueRepository = venueRepository;
 	}
 
 	@Given("^The dependencies exist$")
 	public void theDependenciesExist() throws Throwable {
 		String suffix = UUID.randomUUID().toString().substring(0, 8);
 
+		Venue venue = venueRepository.findByName("EPS Igualada").orElseGet(() -> venueRepository.save(Venue.create("EPS Igualada", "Igualada")));
+
 		JSONObject editionJson = new JSONObject();
 		editionJson.put("year", 2025 + Math.abs(suffix.hashCode() % 100));
-		editionJson.put("venueName", "EPS Igualada");
+		editionJson.put("venue", "/venues/" + venue.getId());
 		editionJson.put("description", "Test Edition");
 
 		var edRes = stepDefs.mockMvc.perform(post("/editions")
@@ -145,9 +151,11 @@ public class AwardAndMatchStepDefs {
 	public void aTeamExistsWithNameAndAnAward(String teamName, String awardName) throws Throwable {
 		String suffix = UUID.randomUUID().toString().substring(0, 8);
 
+		Venue venue2 = venueRepository.findByName("EPS Igualada").orElseGet(() -> venueRepository.save(Venue.create("EPS Igualada", "Igualada")));
+
 		JSONObject editionJson = new JSONObject();
 		editionJson.put("year", 2025 + Math.abs(suffix.hashCode() % 100));
-		editionJson.put("venueName", "EPS Igualada");
+		editionJson.put("venue", "/venues/" + venue2.getId());
 		editionJson.put("description", "Test Edition");
 
 		var edRes = stepDefs.mockMvc.perform(post("/editions")

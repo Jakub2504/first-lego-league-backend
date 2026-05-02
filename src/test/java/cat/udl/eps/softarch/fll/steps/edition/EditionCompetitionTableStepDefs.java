@@ -13,11 +13,13 @@ import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import cat.udl.eps.softarch.fll.domain.match.CompetitionTable;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.match.Match;
 import cat.udl.eps.softarch.fll.domain.match.MatchState;
 import cat.udl.eps.softarch.fll.domain.match.Round;
 import cat.udl.eps.softarch.fll.repository.match.CompetitionTableRepository;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.match.MatchRepository;
 import cat.udl.eps.softarch.fll.repository.match.RoundRepository;
 import io.cucumber.java.en.And;
@@ -28,6 +30,7 @@ public class EditionCompetitionTableStepDefs {
 
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private final RoundRepository roundRepository;
 	private final MatchRepository matchRepository;
 	private final CompetitionTableRepository competitionTableRepository;
@@ -39,11 +42,13 @@ public class EditionCompetitionTableStepDefs {
 	public EditionCompetitionTableStepDefs(
 		StepDefs stepDefs,
 		EditionRepository editionRepository,
+		VenueRepository venueRepository,
 		RoundRepository roundRepository,
 		MatchRepository matchRepository,
 		CompetitionTableRepository competitionTableRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 		this.roundRepository = roundRepository;
 		this.matchRepository = matchRepository;
 		this.competitionTableRepository = competitionTableRepository;
@@ -153,7 +158,8 @@ public class EditionCompetitionTableStepDefs {
 	}
 
 	private Edition createEdition(String prefix) {
-		Edition edition = Edition.create(2026, prefix + " " + UUID.randomUUID(), prefix);
+		Venue venue = venueRepository.save(Venue.create(prefix + " " + UUID.randomUUID(), "Test City"));
+		Edition edition = Edition.create(2026, venue, prefix);
 		return editionRepository.save(edition);
 	}
 

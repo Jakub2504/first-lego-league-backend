@@ -12,11 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import cat.udl.eps.softarch.fll.domain.edition.Edition;
+import cat.udl.eps.softarch.fll.domain.edition.Venue;
 import cat.udl.eps.softarch.fll.domain.match.Match;
 import cat.udl.eps.softarch.fll.domain.match.MatchResult;
 import cat.udl.eps.softarch.fll.domain.match.Round;
 import cat.udl.eps.softarch.fll.domain.team.Team;
 import cat.udl.eps.softarch.fll.repository.edition.EditionRepository;
+import cat.udl.eps.softarch.fll.repository.edition.VenueRepository;
 import cat.udl.eps.softarch.fll.repository.match.MatchRepository;
 import cat.udl.eps.softarch.fll.repository.match.MatchResultRepository;
 import cat.udl.eps.softarch.fll.repository.match.RoundRepository;
@@ -30,6 +32,7 @@ public class LeaderboardStepDefs {
 
 	private final StepDefs stepDefs;
 	private final EditionRepository editionRepository;
+	private final VenueRepository venueRepository;
 	private final RoundRepository roundRepository;
 	private final MatchRepository matchRepository;
 	private final MatchResultRepository matchResultRepository;
@@ -39,12 +42,14 @@ public class LeaderboardStepDefs {
 
 	public LeaderboardStepDefs(StepDefs stepDefs,
 							   EditionRepository editionRepository,
+							   VenueRepository venueRepository,
 							   RoundRepository roundRepository,
 							   MatchRepository matchRepository,
 							   MatchResultRepository matchResultRepository,
 							   TeamRepository teamRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
+		this.venueRepository = venueRepository;
 		this.roundRepository = roundRepository;
 		this.matchRepository = matchRepository;
 		this.matchResultRepository = matchResultRepository;
@@ -158,9 +163,10 @@ public class LeaderboardStepDefs {
 	}
 
 	private Edition createEdition() {
+		Venue venue = venueRepository.save(Venue.create("Venue-" + UUID.randomUUID().toString().substring(0, 6), "Test City"));
 		Edition edition = Edition.create(
 			2025 + ((UUID.randomUUID().hashCode() & 0x7fffffff) % 1000),
-			"Venue-" + UUID.randomUUID().toString().substring(0, 6),
+			venue,
 			"Leaderboard test edition"
 		);
 		edition = editionRepository.save(edition);
