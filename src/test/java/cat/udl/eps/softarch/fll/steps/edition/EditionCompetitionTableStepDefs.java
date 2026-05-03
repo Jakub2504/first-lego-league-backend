@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.fll.steps.edition;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -143,8 +144,8 @@ public class EditionCompetitionTableStepDefs {
 	@And("the competition table overview includes match times {string} and {string}")
 	public void theCompetitionTableOverviewIncludesMatchTimes(String startTime, String endTime) throws Exception {
 		stepDefs.result
-				.andExpect(jsonPath("$[0].matches[0].startTime").value(startTime))
-				.andExpect(jsonPath("$[0].matches[0].endTime").value(endTime));
+				.andExpect(jsonPath("$[0].matches[0].startTime", containsString(startTime)))
+				.andExpect(jsonPath("$[0].matches[0].endTime", containsString(endTime)));
 	}
 
 	@And("the competition table overview error is {string}")

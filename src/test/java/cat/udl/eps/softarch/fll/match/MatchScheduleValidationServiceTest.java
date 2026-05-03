@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +48,7 @@ class MatchScheduleValidationServiceTest {
 	void startTimeEqualsEndTime_throwsInvalidTimeRange() {
 		Match match = createMatch("10:00", "10:00");
 
-		MatchScheduleException ex = assertThrows(MatchScheduleException.class, 
+		MatchScheduleException ex = assertThrows(MatchScheduleException.class,
 				() -> validationService.validateForCreateOrUpdate(match));
 		assertEquals(MatchScheduleErrorCode.INVALID_TIME_RANGE, ex.getErrorCode());
 	}
@@ -56,16 +57,16 @@ class MatchScheduleValidationServiceTest {
 	void startTimeAfterEndTime_throwsInvalidTimeRange() {
 		Match match = createMatch("11:00", "10:00");
 
-		MatchScheduleException ex = assertThrows(MatchScheduleException.class, 
+		MatchScheduleException ex = assertThrows(MatchScheduleException.class,
 				() -> validationService.validateForCreateOrUpdate(match));
 		assertEquals(MatchScheduleErrorCode.INVALID_TIME_RANGE, ex.getErrorCode());
 	}
 
 	@Test
 	void nullTimes_throwsInvalidTimeRange() {
-		Match match = new Match(); 
-		
-		MatchScheduleException ex = assertThrows(MatchScheduleException.class, 
+		Match match = new Match();
+
+		MatchScheduleException ex = assertThrows(MatchScheduleException.class,
 				() -> validationService.validateForCreateOrUpdate(match));
 		assertEquals(MatchScheduleErrorCode.INVALID_TIME_RANGE, ex.getErrorCode());
 	}
@@ -82,7 +83,7 @@ class MatchScheduleValidationServiceTest {
 		when(matchRepository.findOverlappingMatchesByTable(any(), any(), any(), any()))
 				.thenReturn(List.of(existingMatch));
 
-		MatchScheduleException ex = assertThrows(MatchScheduleException.class, 
+		MatchScheduleException ex = assertThrows(MatchScheduleException.class,
 				() -> validationService.validateForCreateOrUpdate(match));
 		assertEquals(MatchScheduleErrorCode.TABLE_TIME_OVERLAP, ex.getErrorCode());
 	}
@@ -102,8 +103,11 @@ class MatchScheduleValidationServiceTest {
 
 	private Match createMatch(String start, String end) {
 		Match match = new Match();
-		match.setStartTime(LocalDateTime.parse(start));
-		match.setEndTime(LocalDateTime.parse(end));
+		LocalDate today = LocalDate.now();
+
+		match.setStartTime(LocalTime.parse(start).atDate(today));
+		match.setEndTime(LocalTime.parse(end).atDate(today));
+
 		return match;
 	}
 }

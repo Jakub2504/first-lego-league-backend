@@ -21,57 +21,57 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MatchSearchController {
 
-	private final MatchSearchService matchSearchService;
+    private final MatchSearchService matchSearchService;
 
-	@GetMapping("/filter")
-	public ResponseEntity<Object> searchMatches(
-		@RequestParam(name = "startFrom", required = false)
-		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalDateTime startFrom,
+    @GetMapping("/filter")
+    public ResponseEntity<Object> searchMatches(
+        @RequestParam(name = "startTime", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
 
-		@RequestParam(name = "endTo", required = false)
-		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalDateTime endTo,
+        @RequestParam(name = "endTime", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
 
-		@RequestParam(name = "tableId", required = false) String tableId,
-		@RequestParam(name = "roundId", required = false) Long roundId,
-		Pageable pageable
-	) {
-		try {
-			Page<MatchSearchItemResponse> page =
-				matchSearchService.searchMatches(startFrom, endTo, tableId, roundId, pageable);
+        @RequestParam(name = "tableId", required = false) String tableId,
+        @RequestParam(name = "roundId", required = false) Long roundId,
+        Pageable pageable
+    ) {
+        try {
+            Page<MatchSearchItemResponse> page =
+                matchSearchService.searchMatches(startTime, endTime, tableId, roundId, pageable);
 
-			MatchSearchPageResponse response = new MatchSearchPageResponse();
-			response.setPage(page.getNumber());
-			response.setSize(page.getSize());
-			response.setTotalElements(page.getTotalElements());
-			response.setItems(page.getContent());
+            MatchSearchPageResponse response = new MatchSearchPageResponse();
+            response.setPage(page.getNumber());
+            response.setSize(page.getSize());
+            response.setTotalElements(page.getTotalElements());
+            response.setItems(page.getContent());
 
-			return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
 
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.unprocessableContent()
-				.body(Map.of(
-					"errorCode", ex.getMessage(),
-					"message", "Start time must not be after end time",
-					"timestamp", java.time.Instant.now().toString(),
-					"path", "/matches/filter"
-				));
-		}
-	}
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.unprocessableContent()
+                .body(Map.of(
+                    "errorCode", ex.getMessage(),
+                    "message", "Start time must not be after end time",
+                    "timestamp", java.time.Instant.now().toString(),
+                    "path", "/matches/filter"
+                ));
+        }
+    }
 
-	@GetMapping("/search/findByTeam")
-	public ResponseEntity<Object> findByTeam(
-		@RequestParam(name = "team") String teamUri
-	) {
-		try {
-			List<MatchSearchItemResponse> matches = matchSearchService.findByTeam(teamUri);
-			var embedded = Map.of("matches", matches);
-			return ResponseEntity.ok(Map.of("_embedded", embedded));
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.status(404)
-				.body(Map.of(
-					"error", ex.getMessage(),
-					"message", "The referenced team does not exist"
-				));
-		}
-	}
+    @GetMapping("/search/findByTeam")
+    public ResponseEntity<Object> findByTeam(
+        @RequestParam(name = "team") String teamUri
+    ) {
+        try {
+            List<MatchSearchItemResponse> matches = matchSearchService.findByTeam(teamUri);
+            var embedded = Map.of("matches", matches);
+            return ResponseEntity.ok(Map.of("_embedded", embedded));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(404)
+                .body(Map.of(
+                    "error", ex.getMessage(),
+                    "message", "The referenced team does not exist"
+                ));
+        }
+    }
 }

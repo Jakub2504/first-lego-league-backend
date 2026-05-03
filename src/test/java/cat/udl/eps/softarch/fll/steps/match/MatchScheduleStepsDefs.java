@@ -59,9 +59,10 @@ public class MatchScheduleStepsDefs {
 
 	@When("I request to create a match on {string} from {string} to {string}")
 	public void i_request_to_create_a_match(String tableId, String startTime, String endTime) throws Throwable {
+		LocalDate today = LocalDate.now();
 		String jsonPayload = String.format(
-				"{\"startTime\": \"%s\", \"endTime\": \"%s\", \"competitionTable\": \"/competitionTables/%s\"}",
-				startTime, endTime, tableId);
+				"{\"startTime\": \"%sT%s\", \"endTime\": \"%sT%s\", \"competitionTable\": \"/competitionTables/%s\"}",
+				today, startTime, today, endTime, tableId);
 
 		stepDefs.result = stepDefs.mockMvc.perform(post("/matches")
 				.contentType(MediaType.APPLICATION_JSON)
