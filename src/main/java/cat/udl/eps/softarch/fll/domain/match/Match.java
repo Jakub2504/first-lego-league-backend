@@ -34,10 +34,10 @@ public class Match extends UriEntity<Long> {
 	private Long id;
 
 	@Getter
-    private LocalDateTime startTime;
+	private LocalDateTime startTime;
 
-    @Getter
-    private LocalDateTime endTime;
+	@Getter
+	private LocalDateTime endTime;
 
 	@Getter
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -87,12 +87,12 @@ public class Match extends UriEntity<Long> {
 	}
 
 	public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
+		this.startTime = startTime;
+	}
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
+	public void setEndTime(LocalDateTime endTime) {
+		this.endTime = endTime;
+	}
 
 	public void setRound(Round round) {
 		this.round = round;
