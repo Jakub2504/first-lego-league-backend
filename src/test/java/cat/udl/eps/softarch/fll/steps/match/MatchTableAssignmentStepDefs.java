@@ -2,7 +2,9 @@ package cat.udl.eps.softarch.fll.steps.match;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.json.JSONObject;
@@ -25,11 +27,7 @@ public class MatchTableAssignmentStepDefs {
 
 	private Match currentMatch;
 
-	public MatchTableAssignmentStepDefs(
-			StepDefs stepDefs,
-			MatchRepository matchRepository,
-			CompetitionTableRepository competitionTableRepository,
-			MatchResultRepository matchResultRepository) {
+	public MatchTableAssignmentStepDefs(StepDefs stepDefs, MatchRepository matchRepository, CompetitionTableRepository competitionTableRepository, MatchResultRepository matchResultRepository) {
 		this.stepDefs = stepDefs;
 		this.matchRepository = matchRepository;
 		this.competitionTableRepository = competitionTableRepository;
@@ -47,8 +45,12 @@ public class MatchTableAssignmentStepDefs {
 	@Given("a scheduled match without table exists from {string} to {string}")
 	public void createScheduledMatchWithoutTable(String startTime, String endTime) {
 		Match match = new Match();
-		match.setStartTime(LocalDateTime.parse(startTime));
-		match.setEndTime(LocalDateTime.parse(endTime));
+
+		LocalDate today = LocalDate.now();
+
+		match.setStartTime(LocalTime.parse(startTime).atDate(today));
+		match.setEndTime(LocalTime.parse(endTime).atDate(today));
+
 		currentMatch = matchRepository.save(match);
 	}
 
@@ -69,11 +71,7 @@ public class MatchTableAssignmentStepDefs {
 		createScheduledMatchAssignedToTableInternal(tableIdentifier, startTime, endTime, true);
 	}
 
-	private void createScheduledMatchAssignedToTableInternal(
-			String tableIdentifier,
-			String startTime,
-			String endTime,
-			boolean setAsCurrent) {
+	private void createScheduledMatchAssignedToTableInternal(String tableIdentifier, String startTime, String endTime, boolean setAsCurrent) {
 		CompetitionTable table = competitionTableRepository.findById(tableIdentifier).orElseThrow();
 		Match match = new Match();
 		match.setStartTime(LocalDateTime.parse(startTime));

@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,13 +49,7 @@ public class MatchAssignmentStepDefs {
 	private Floater currentFloater;
 	private Round currentRound;
 
-	public MatchAssignmentStepDefs(
-		StepDefs stepDefs,
-		MatchRepository matchRepository,
-		RefereeRepository refereeRepository,
-		FloaterRepository floaterRepository,
-		MatchResultRepository matchResultRepository,
-		RoundRepository roundRepository) {
+	public MatchAssignmentStepDefs(StepDefs stepDefs, MatchRepository matchRepository, RefereeRepository refereeRepository, FloaterRepository floaterRepository, MatchResultRepository matchResultRepository, RoundRepository roundRepository) {
 		this.stepDefs = stepDefs;
 		this.matchRepository = matchRepository;
 		this.refereeRepository = refereeRepository;
@@ -106,7 +101,8 @@ public class MatchAssignmentStepDefs {
 
 	@Given("a floater volunteer exists")
 	public void createFloater() {
-		Floater floater = Floater.create("Floater One", "floater" + System.nanoTime() + "@mail.com", "555555555", "F" + System.nanoTime());
+		Floater floater = Floater.create("Floater One", "floater" + System.nanoTime() + "@mail.com", "555555555",
+				"F" + System.nanoTime());
 		currentFloater = floaterRepository.save(floater);
 	}
 
@@ -121,11 +117,7 @@ public class MatchAssignmentStepDefs {
 	}
 
 	@Given("a round with two scheduled matches exists from {string}-{string} and {string}-{string}")
-	public void createRoundWithTwoScheduledMatches(
-		String firstStartTime,
-		String firstEndTime,
-		String secondStartTime,
-		String secondEndTime) {
+	public void createRoundWithTwoScheduledMatches(String firstStartTime, String firstEndTime, String secondStartTime, String secondEndTime) {
 		currentRound = createRound();
 		batchMatches.clear();
 		batchMatches.add(createMatch(MatchState.SCHEDULED, firstStartTime, firstEndTime, null, currentRound));
@@ -133,11 +125,7 @@ public class MatchAssignmentStepDefs {
 	}
 
 	@Given("a round with overlapping scheduled matches exists from {string}-{string} and {string}-{string}")
-	public void createRoundWithOverlappingScheduledMatches(
-		String firstStartTime,
-		String firstEndTime,
-		String secondStartTime,
-		String secondEndTime) {
+	public void createRoundWithOverlappingScheduledMatches(String firstStartTime, String firstEndTime, String secondStartTime, String secondEndTime) {
 		createRoundWithTwoScheduledMatches(firstStartTime, firstEndTime, secondStartTime, secondEndTime);
 	}
 
@@ -169,22 +157,22 @@ public class MatchAssignmentStepDefs {
 	@When("I assign referees in batch for that round")
 	public void assignRefereesInBatchForRound() throws Exception {
 		assignBatch(List.of(
-			new BatchAssignment(batchMatches.get(0).getId(), firstReferee.getId()),
-			new BatchAssignment(batchMatches.get(1).getId(), secondReferee.getId())));
+				new BatchAssignment(batchMatches.get(0).getId(), firstReferee.getId()),
+				new BatchAssignment(batchMatches.get(1).getId(), secondReferee.getId())));
 	}
 
 	@When("I assign the same referee in batch to both matches")
 	public void assignSameRefereeInBatchToBothMatches() throws Exception {
 		assignBatch(List.of(
-			new BatchAssignment(batchMatches.get(0).getId(), firstReferee.getId()),
-			new BatchAssignment(batchMatches.get(1).getId(), firstReferee.getId())));
+				new BatchAssignment(batchMatches.get(0).getId(), firstReferee.getId()),
+				new BatchAssignment(batchMatches.get(1).getId(), firstReferee.getId())));
 	}
 
 	@When("I assign one referee and one floater in batch for that round")
 	public void assignOneRefereeAndOneFloaterInBatchForRound() throws Exception {
 		assignBatch(List.of(
-			new BatchAssignment(batchMatches.get(0).getId(), firstReferee.getId()),
-			new BatchAssignment(batchMatches.get(1).getId(), currentFloater.getId())));
+				new BatchAssignment(batchMatches.get(0).getId(), firstReferee.getId()),
+				new BatchAssignment(batchMatches.get(1).getId(), currentFloater.getId())));
 	}
 
 	@When("I assign referees in batch for round id {string}")
@@ -240,8 +228,12 @@ public class MatchAssignmentStepDefs {
 	private Match createMatch(MatchState state, String startTime, String endTime, Referee referee, Round round) {
 		Match match = new Match();
 		match.setState(state);
-		match.setStartTime(LocalDateTime.parse(startTime));
-		match.setEndTime(LocalDateTime.parse(endTime));
+
+		LocalDate today = LocalDate.now();
+
+		match.setStartTime(LocalTime.parse(startTime).atDate(today));
+		match.setEndTime(LocalTime.parse(endTime).atDate(today));
+
 		match.setReferee(referee);
 		match.setRound(round);
 		return matchRepository.save(match);
@@ -258,11 +250,11 @@ public class MatchAssignmentStepDefs {
 		request.put("matchId", matchId);
 		request.put("refereeId", refereeId);
 		stepDefs.result = stepDefs.mockMvc.perform(
-			post("/matchAssignments/assign")
-				.with(AuthenticationStepDefs.authenticate())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(request.toString())
-				.accept(MediaType.APPLICATION_JSON));
+				post("/matchAssignments/assign")
+						.with(AuthenticationStepDefs.authenticate())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(request.toString())
+						.accept(MediaType.APPLICATION_JSON));
 	}
 
 	private void assignBatch(List<BatchAssignment> assignments) throws Exception {
@@ -283,11 +275,11 @@ public class MatchAssignmentStepDefs {
 		request.put("assignments", payloadAssignments);
 
 		stepDefs.result = stepDefs.mockMvc.perform(
-			post("/matchAssignments/batch")
-				.with(AuthenticationStepDefs.authenticate())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(request.toString())
-				.accept(MediaType.APPLICATION_JSON));
+				post("/matchAssignments/batch")
+						.with(AuthenticationStepDefs.authenticate())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(request.toString())
+						.accept(MediaType.APPLICATION_JSON));
 	}
 
 	private record BatchAssignment(Long matchId, Long refereeId) {

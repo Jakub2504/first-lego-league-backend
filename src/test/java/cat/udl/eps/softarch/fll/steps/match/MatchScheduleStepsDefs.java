@@ -5,8 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-
+import java.time.LocalDate;
+import java.time.LocalTime;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,8 +48,12 @@ public class MatchScheduleStepsDefs {
 		CompetitionTable table = entityManager.find(CompetitionTable.class, tableId);
 		Match match = new Match();
 		match.setCompetitionTable(table);
-		match.setStartTime(LocalDateTime.parse(startTime));
-		match.setEndTime(LocalDateTime.parse(endTime));
+
+		LocalDate today = LocalDate.now();
+
+		match.setStartTime(LocalTime.parse(startTime).atDate(today));
+		match.setEndTime(LocalTime.parse(endTime).atDate(today));
+
 		matchRepository.save(match);
 	}
 
@@ -57,8 +61,7 @@ public class MatchScheduleStepsDefs {
 	public void i_request_to_create_a_match(String tableId, String startTime, String endTime) throws Throwable {
 		String jsonPayload = String.format(
 				"{\"startTime\": \"%s\", \"endTime\": \"%s\", \"competitionTable\": \"/competitionTables/%s\"}",
-				startTime, endTime, tableId
-		);
+				startTime, endTime, tableId);
 
 		stepDefs.result = stepDefs.mockMvc.perform(post("/matches")
 				.contentType(MediaType.APPLICATION_JSON)

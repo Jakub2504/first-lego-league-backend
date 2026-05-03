@@ -9,7 +9,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 public class MatchStepsDefs {
@@ -34,8 +35,10 @@ public class MatchStepsDefs {
 	public void i_create_a_new_match_starting_at_and_ending_at(String startTimeStr, String endTimeStr) {
 		match = new Match();
 
-		match.setStartTime(LocalDateTime.parse(startTimeStr));
-		match.setEndTime(LocalDateTime.parse(endTimeStr));
+		LocalDate today = LocalDate.now();
+
+		match.setStartTime(LocalTime.parse(startTimeStr).atDate(today));
+		match.setEndTime(LocalTime.parse(endTimeStr).atDate(today));
 
 		round.addMatch(match);
 		table.addMatch(match);

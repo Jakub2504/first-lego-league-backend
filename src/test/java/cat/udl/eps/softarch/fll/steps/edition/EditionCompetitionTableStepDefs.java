@@ -5,7 +5,8 @@ import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
@@ -39,13 +40,7 @@ public class EditionCompetitionTableStepDefs {
 	private String targetEditionTableIdentifier;
 	private String otherEditionTableIdentifier;
 
-	public EditionCompetitionTableStepDefs(
-		StepDefs stepDefs,
-		EditionRepository editionRepository,
-		VenueRepository venueRepository,
-		RoundRepository roundRepository,
-		MatchRepository matchRepository,
-		CompetitionTableRepository competitionTableRepository) {
+	public EditionCompetitionTableStepDefs(StepDefs stepDefs, EditionRepository editionRepository, VenueRepository venueRepository, RoundRepository roundRepository, MatchRepository matchRepository, CompetitionTableRepository competitionTableRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
 		this.venueRepository = venueRepository;
@@ -116,7 +111,7 @@ public class EditionCompetitionTableStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(get("/editions/{editionId}/tables", targetEditionId)
 				.accept(MediaType.APPLICATION_JSON)
 				.with(AuthenticationStepDefs.authenticate()))
-			.andDo(print());
+				.andDo(print());
 	}
 
 	@When("I request competition tables for edition id {long}")
@@ -124,7 +119,7 @@ public class EditionCompetitionTableStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(get("/editions/{editionId}/tables", editionId)
 				.accept(MediaType.APPLICATION_JSON)
 				.with(AuthenticationStepDefs.authenticate()))
-			.andDo(print());
+				.andDo(print());
 	}
 
 	@And("the competition table overview contains {int} table with {int} matches")
@@ -148,8 +143,8 @@ public class EditionCompetitionTableStepDefs {
 	@And("the competition table overview includes match times {string} and {string}")
 	public void theCompetitionTableOverviewIncludesMatchTimes(String startTime, String endTime) throws Exception {
 		stepDefs.result
-			.andExpect(jsonPath("$[0].matches[0].startTime").value(startTime))
-			.andExpect(jsonPath("$[0].matches[0].endTime").value(endTime));
+				.andExpect(jsonPath("$[0].matches[0].startTime").value(startTime))
+				.andExpect(jsonPath("$[0].matches[0].endTime").value(endTime));
 	}
 
 	@And("the competition table overview error is {string}")
@@ -184,8 +179,11 @@ public class EditionCompetitionTableStepDefs {
 		Match match = new Match();
 		match.setRound(round);
 		match.setCompetitionTable(table);
-		match.setStartTime(LocalDateTime.parse(startTime));
-		match.setEndTime(LocalDateTime.parse(endTime));
+
+		LocalDate today = LocalDate.now();
+
+		match.setStartTime(LocalTime.parse(startTime).atDate(today));
+		match.setEndTime(LocalTime.parse(endTime).atDate(today));
 		match.setState(state);
 		matchRepository.save(match);
 	}
