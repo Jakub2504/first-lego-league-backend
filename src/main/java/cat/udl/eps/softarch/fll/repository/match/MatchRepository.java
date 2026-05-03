@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.fll.repository.match;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -35,8 +35,8 @@ public interface MatchRepository extends
 		""")
 	List<Match> findOverlappingAssignments(
 		@Param("referee") Referee referee,
-		@Param("newMatchStartTime") LocalTime newMatchStartTime,
-		@Param("newMatchEndTime") LocalTime newMatchEndTime,
+		@Param("newMatchStartTime") LocalDateTime newMatchStartTime,
+		@Param("newMatchEndTime") LocalDateTime newMatchEndTime,
 		@Param("currentMatchId") Long currentMatchId
 	);
 
@@ -50,8 +50,8 @@ public interface MatchRepository extends
 	@RestResource(exported = false)
 	boolean existsOverlappingAssignmentsForTable(
 		@Param("table") CompetitionTable table,
-		@Param("newMatchStartTime") LocalTime newMatchStartTime,
-		@Param("newMatchEndTime") LocalTime newMatchEndTime,
+		@Param("newMatchStartTime") LocalDateTime newMatchStartTime,
+		@Param("newMatchEndTime") LocalDateTime newMatchEndTime,
 		@Param("currentMatchId") Long currentMatchId
 	);
 
@@ -69,8 +69,8 @@ public interface MatchRepository extends
 		""")
 	List<Match> findOverlappingMatchesByTable(
 		@Param("tableId") String tableId,
-		@Param("newStartTime") LocalTime newStartTime,
-		@Param("newEndTime") LocalTime newEndTime,
+		@Param("newStartTime") LocalDateTime newStartTime,
+		@Param("newEndTime") LocalDateTime newEndTime,
 		@Param("currentMatchId") Long currentMatchId
 	);
 

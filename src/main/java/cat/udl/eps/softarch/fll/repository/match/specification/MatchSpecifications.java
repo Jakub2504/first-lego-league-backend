@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.fll.repository.match.specification;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import org.springframework.data.jpa.domain.Specification;
 import cat.udl.eps.softarch.fll.domain.match.Match;
 
@@ -8,7 +8,7 @@ public class MatchSpecifications {
 
 	private MatchSpecifications() {}
 
-	public static Specification<Match> timeOverlap(LocalTime startFrom, LocalTime endTo) {
+	public static Specification<Match> timeOverlap(LocalDateTime startFrom, LocalDateTime endTo) {
 		return (root, query, cb) -> {
 
 			if (startFrom != null && endTo != null) {

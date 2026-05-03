@@ -4,7 +4,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.time.LocalTime;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
@@ -31,8 +33,7 @@ public class MatchSearchStepDefs {
 
 	private Long currentRoundId;
 
-	public MatchSearchStepDefs(StepDefs stepDefs, MatchRepository matchRepository,
-			RoundRepository roundRepository, CompetitionTableRepository tableRepository, TeamRepository teamRepository) {
+	public MatchSearchStepDefs(StepDefs stepDefs, MatchRepository matchRepository, RoundRepository roundRepository, CompetitionTableRepository tableRepository, TeamRepository teamRepository) {
 		this.stepDefs = stepDefs;
 		this.matchRepository = matchRepository;
 		this.roundRepository = roundRepository;
@@ -69,14 +70,14 @@ public class MatchSearchStepDefs {
 		currentRoundId = round.getId();
 
 		Match match1 = new Match();
-		match1.setStartTime(LocalTime.of(10, 0));
-		match1.setEndTime(LocalTime.of(11, 0));
+		match1.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		match1.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
 		match1.setCompetitionTable(table);
 		match1.setRound(round);
 
 		Match match2 = new Match();
-		match2.setStartTime(LocalTime.of(11, 15));
-		match2.setEndTime(LocalTime.of(12, 0));
+		match2.setStartTime(LocalDateTime.of(2026, 5, 3, 11, 15));
+		match2.setEndTime(LocalDateTime.of(2026, 5, 3, 12, 0));
 		match2.setCompetitionTable(table);
 		match2.setRound(round);
 
@@ -87,49 +88,48 @@ public class MatchSearchStepDefs {
 	@When("I search matches with no filters")
 	public void iSearchMatchesWithNoFilters() throws Exception {
 		stepDefs.result = stepDefs.mockMvc.perform(
-			get("/matches/filter")
-				.param("page", "0")
-				.param("sort", "startTime,asc")
-				.param("sort", "id,asc")
-				.with(user("admin"))
-				.contentType(MediaType.APPLICATION_JSON)
-		);
+				get("/matches/filter")
+						.param("page", "0")
+						.param("sort", "startTime,asc")
+						.param("sort", "id,asc")
+						.with(user("admin"))
+						.contentType(MediaType.APPLICATION_JSON));
 	}
 
 	@When("I search matches with table {string} and round {int}")
 	public void iSearchMatchesWithTableAndRound(String tableId, Integer roundNumber) throws Exception {
 		stepDefs.result = stepDefs.mockMvc.perform(
-			get("/matches/filter")
-				.param("tableId", tableId)
-				.param("roundId", String.valueOf(currentRoundId))
-				.with(user("admin"))
-				.contentType(MediaType.APPLICATION_JSON)
-		);
+				get("/matches/filter")
+						.param("tableId", tableId)
+						.param("roundId", String.valueOf(currentRoundId))
+						.with(user("admin"))
+						.contentType(MediaType.APPLICATION_JSON));
 	}
 
 	@When("I search matches between {string} and {string}")
-	public void iSearchMatchesBetween(String start, String end) throws Exception {
+	public void i_search_matches_between_and(String startTime, String endTime) throws Exception {
+		String today = java.time.LocalDate.now().toString();
+
 		stepDefs.result = stepDefs.mockMvc.perform(
-			get("/matches/filter")
-				.param("startFrom", start)
-				.param("endTo", end)
-				.with(user("admin"))
-				.contentType(MediaType.APPLICATION_JSON)
-		);
+				get("/matches/filter")
+						.param("startTime", today + "T" + startTime)
+						.param("endTime", today + "T" + endTime)
+						.with(user("admin"))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andDo(print());
 	}
 
 	@When("I search matches with table {string} between {string} and {string}")
-	public void iSearchMatchesWithTableBetween(String tableId, String start, String end) throws Exception {
+	public void iSearchMatchesWithTableBetween(String tableId, String startTime, String endTime) throws Exception {
 		stepDefs.result = stepDefs.mockMvc.perform(
-			get("/matches/filter")
-				.param("tableId", tableId)
-				.param("startFrom", start)
-				.param("endTo", end)
-				.with(user("admin"))
-				.contentType(MediaType.APPLICATION_JSON)
-		);
+				get("/matches/filter")
+						.param("tableId", tableId)
+						.param("startTime", LocalDate.now() + "T" + startTime)
+						.param("endTime", LocalDate.now() + "T" + endTime)
+						.with(user("admin"))
+						.contentType(MediaType.APPLICATION_JSON));
 	}
-
 
 
 	@Then("the match response status should be {int}")
@@ -140,10 +140,10 @@ public class MatchSearchStepDefs {
 	@Then("the response should contain matches")
 	public void theResponseShouldContainMatchesInOrder() throws Exception {
 		stepDefs.result
-			.andExpect(jsonPath("$.items[0].startTime").value("10:00:00"))
-			.andExpect(jsonPath("$.items[1].startTime").value("11:15:00"))
-			.andExpect(jsonPath("$.page").value(0))
-			.andExpect(jsonPath("$.totalElements").value(2));
+				.andExpect(jsonPath("$.items[0].startTime", org.hamcrest.Matchers.containsString("10:00:00")))
+				.andExpect(jsonPath("$.items[1].startTime", org.hamcrest.Matchers.containsString("11:15:00")))
+				.andExpect(jsonPath("$.page").value(0))
+				.andExpect(jsonPath("$.totalElements").value(2));
 	}
 
 	@Then("the error code should be \"INVALID_TIME_FILTER_RANGE\"")
@@ -171,8 +171,8 @@ public class MatchSearchStepDefs {
 		currentRoundId = round.getId();
 
 		Match match = new Match();
-		match.setStartTime(LocalTime.of(10, 0));
-		match.setEndTime(LocalTime.of(10, 30));
+		match.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		match.setEndTime(LocalDateTime.of(2026, 5, 3, 10, 30));
 		match.setTeamA(team);
 		match.setCompetitionTable(table);
 		match.setRound(round);
@@ -192,25 +192,24 @@ public class MatchSearchStepDefs {
 	@When("I search matches for team {string}")
 	public void iSearchMatchesForTeam(String teamUri) throws Exception {
 		stepDefs.result = stepDefs.mockMvc.perform(
-			get("/matches/search/findByTeam")
-				.param("team", teamUri)
-				.with(user("admin"))
-				.contentType(MediaType.APPLICATION_JSON)
-		);
+				get("/matches/search/findByTeam")
+						.param("team", teamUri)
+						.with(user("admin"))
+						.contentType(MediaType.APPLICATION_JSON));
 	}
 
 	@Then("the team matches response should contain matches for {string}")
 	public void theTeamMatchesResponseShouldContainMatchesFor(String teamName) throws Exception {
 		stepDefs.result
-			.andExpect(jsonPath("$._embedded.matches").isArray())
-			.andExpect(jsonPath("$._embedded.matches[0]").exists());
+				.andExpect(jsonPath("$._embedded.matches").isArray())
+				.andExpect(jsonPath("$._embedded.matches[0]").exists());
 	}
 
 	@Then("the team matches response should be empty")
 	public void theTeamMatchesResponseShouldBeEmpty() throws Exception {
 		stepDefs.result
-			.andExpect(jsonPath("$._embedded.matches").isArray())
-			.andExpect(jsonPath("$._embedded.matches").isEmpty());
+				.andExpect(jsonPath("$._embedded.matches").isArray())
+				.andExpect(jsonPath("$._embedded.matches").isEmpty());
 	}
 
 	@Then("the team matches error should be {string}")

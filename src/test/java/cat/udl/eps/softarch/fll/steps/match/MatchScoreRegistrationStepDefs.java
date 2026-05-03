@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,19 +46,19 @@ public class MatchScoreRegistrationStepDefs {
 	@Given("^There is a finished match ready for score registration$")
 	public void thereIsAFinishedMatchReadyForScoreRegistration() {
 		createDefaultTeams();
-		match = createMatch(LocalTime.of(10, 0), LocalTime.of(11, 0), teamA, teamB);
+		match = createMatch(LocalDateTime.of(2026, 5, 3, 10, 0), LocalDateTime.of(2026, 5, 3, 11, 0), teamA, teamB);
 	}
 
 	@Given("^There is an unfinished match ready for score registration$")
 	public void thereIsAnUnfinishedMatchReadyForScoreRegistration() {
 		createDefaultTeams();
-		match = createMatch(LocalTime.of(10, 0), null, teamA, teamB);
+		match = createMatch(LocalDateTime.of(2026, 5, 3, 10, 0), null, teamA, teamB);
 	}
 
 	@Given("^There is a match with invalid time range ready for score registration$")
 	public void thereIsAMatchWithInvalidTimeRangeReadyForScoreRegistration() {
 		createDefaultTeams();
-		match = createMatch(LocalTime.of(11, 0), LocalTime.of(10, 0), teamA, teamB);
+		match = createMatch(LocalDateTime.of(2026, 5, 3, 11, 0), LocalDateTime.of(2026, 5, 3, 10, 0), teamA, teamB);
 	}
 
 	@Given("^There is already a registered score for that match$")
@@ -171,7 +171,7 @@ public class MatchScoreRegistrationStepDefs {
 		teamB = createTeam("TeamB-" + suffix);
 	}
 
-	private Match createMatch(LocalTime startTime, LocalTime endTime, Team assignedTeamA, Team assignedTeamB) {
+	private Match createMatch(LocalDateTime startTime, LocalDateTime endTime, Team assignedTeamA, Team assignedTeamB) {
 		Match createdMatch = new Match();
 		createdMatch.setStartTime(startTime);
 		createdMatch.setEndTime(endTime);

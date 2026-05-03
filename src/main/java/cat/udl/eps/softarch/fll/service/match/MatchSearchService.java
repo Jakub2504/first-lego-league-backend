@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.fll.service.match;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import cat.udl.eps.softarch.fll.dto.MatchSearchItemResponse;
 import org.springframework.data.domain.Page;
@@ -26,8 +26,8 @@ public class MatchSearchService {
 	private final EditionRepository editionRepository;
 
 	public Page<MatchSearchItemResponse> searchMatches(
-		LocalTime startFrom,
-		LocalTime endTo,
+		LocalDateTime startFrom,
+		LocalDateTime endTo,
 		String tableId,
 		Long roundId,
 		Pageable pageable) {
@@ -53,7 +53,7 @@ public class MatchSearchService {
 		return page.map(this::toDto);
 	}
 
-	private void validateTimeRange(LocalTime startFrom, LocalTime endTo) {
+	private void validateTimeRange(LocalDateTime startFrom, LocalDateTime endTo) {
 		if (startFrom != null && endTo != null && startFrom.isAfter(endTo)) {
 			throw new IllegalArgumentException("INVALID_TIME_FILTER_RANGE");
 		}

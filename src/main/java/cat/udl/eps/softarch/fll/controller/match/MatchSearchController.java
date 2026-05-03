@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.fll.controller.match;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
@@ -25,11 +25,11 @@ public class MatchSearchController {
 
 	@GetMapping("/filter")
 	public ResponseEntity<Object> searchMatches(
-		@RequestParam(name = "startFrom", required = false)
-		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startFrom,
+		@RequestParam(name = "startTime", required = false)
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
 
-		@RequestParam(name = "endTo", required = false)
-		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTo,
+		@RequestParam(name = "endTime", required = false)
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
 
 		@RequestParam(name = "tableId", required = false) String tableId,
 		@RequestParam(name = "roundId", required = false) Long roundId,
@@ -37,7 +37,7 @@ public class MatchSearchController {
 	) {
 		try {
 			Page<MatchSearchItemResponse> page =
-				matchSearchService.searchMatches(startFrom, endTo, tableId, roundId, pageable);
+				matchSearchService.searchMatches(startTime, endTime, tableId, roundId, pageable);
 
 			MatchSearchPageResponse response = new MatchSearchPageResponse();
 			response.setPage(page.getNumber());

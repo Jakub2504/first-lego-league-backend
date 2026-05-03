@@ -18,7 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +34,10 @@ public class Match extends UriEntity<Long> {
 	private Long id;
 
 	@Getter
-	private LocalTime startTime;
+	private LocalDateTime startTime;
 
 	@Getter
-	private LocalTime endTime;
+	private LocalDateTime endTime;
 
 	@Getter
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -86,11 +86,11 @@ public class Match extends UriEntity<Long> {
 		this.id = id;
 	}
 
-	public void setStartTime(LocalTime startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
-	public void setEndTime(LocalTime endTime) {
+	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 

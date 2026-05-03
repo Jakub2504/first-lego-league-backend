@@ -3,7 +3,7 @@ package cat.udl.eps.softarch.fll.steps.edition;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,13 +40,7 @@ public class LeaderboardStepDefs {
 	private final Map<String, String> teamNameByAlias = new HashMap<>();
 	private Long currentEditionId;
 
-	public LeaderboardStepDefs(StepDefs stepDefs,
-							   EditionRepository editionRepository,
-							   VenueRepository venueRepository,
-							   RoundRepository roundRepository,
-							   MatchRepository matchRepository,
-							   MatchResultRepository matchResultRepository,
-							   TeamRepository teamRepository) {
+	public LeaderboardStepDefs(StepDefs stepDefs, EditionRepository editionRepository, VenueRepository venueRepository, RoundRepository roundRepository, MatchRepository matchRepository, MatchResultRepository matchResultRepository, TeamRepository teamRepository) {
 		this.stepDefs = stepDefs;
 		this.editionRepository = editionRepository;
 		this.venueRepository = venueRepository;
@@ -119,17 +113,17 @@ public class LeaderboardStepDefs {
 	@When("I request leaderboard for that edition with page {int} and size {int}")
 	public void iRequestLeaderboardForThatEditionWithPagination(int page, int size) throws Exception {
 		stepDefs.result = stepDefs.mockMvc.perform(get("/leaderboards/editions/" + currentEditionId)
-			.param("page", String.valueOf(page))
-			.param("size", String.valueOf(size))
-			.accept(MediaType.APPLICATION_JSON));
+				.param("page", String.valueOf(page))
+				.param("size", String.valueOf(size))
+				.accept(MediaType.APPLICATION_JSON));
 	}
 
 	@When("I request leaderboard for non-existent edition {long} with page {int} and size {int}")
 	public void iRequestLeaderboardForNonExistentEditionWithPagination(long editionId, int page, int size) throws Exception {
 		stepDefs.result = stepDefs.mockMvc.perform(get("/leaderboards/editions/" + editionId)
-			.param("page", String.valueOf(page))
-			.param("size", String.valueOf(size))
-			.accept(MediaType.APPLICATION_JSON));
+				.param("page", String.valueOf(page))
+				.param("size", String.valueOf(size))
+				.accept(MediaType.APPLICATION_JSON));
 	}
 
 	@When("I request leaderboard for a non-existent edition with page {int} and size {int}")
@@ -163,12 +157,12 @@ public class LeaderboardStepDefs {
 	}
 
 	private Edition createEdition() {
-		Venue venue = venueRepository.save(Venue.create("Venue-" + UUID.randomUUID().toString().substring(0, 6), "Test City"));
+		Venue venue = venueRepository
+				.save(Venue.create("Venue-" + UUID.randomUUID().toString().substring(0, 6), "Test City"));
 		Edition edition = Edition.create(
-			2025 + ((UUID.randomUUID().hashCode() & 0x7fffffff) % 1000),
-			venue,
-			"Leaderboard test edition"
-		);
+				2025 + ((UUID.randomUUID().hashCode() & 0x7fffffff) % 1000),
+				venue,
+				"Leaderboard test edition");
 		edition = editionRepository.save(edition);
 		currentEditionId = edition.getId();
 		return edition;
@@ -196,8 +190,8 @@ public class LeaderboardStepDefs {
 		match.setRound(round);
 		match.setTeamA(team);
 		match.setTeamB(opponent);
-		match.setStartTime(LocalTime.of(10, 0));
-		match.setEndTime(LocalTime.of(11, 0));
+		match.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		match.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
 		match = matchRepository.save(match);
 
 		MatchResult result = MatchResult.create(score, match, team);

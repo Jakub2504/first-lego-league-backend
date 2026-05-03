@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,8 +59,8 @@ class MatchScoreRegistrationServiceTest {
 
 		match = new Match();
 		match.setId(1L);
-		match.setStartTime(LocalTime.of(10, 0));
-		match.setEndTime(LocalTime.of(11, 0));
+		match.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		match.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
 		match.setTeamA(teamA);
 		match.setTeamB(teamB);
 
