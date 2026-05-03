@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -101,4 +102,9 @@ public interface MatchRepository extends
 		""")
 	@RestResource(exported = false)
 	List<Match> findByEditionId(@Param("editionId") Long editionId);
+
+	@Modifying
+	@Query("UPDATE Match m SET m.referee = null WHERE m.referee.id = :refereeId")
+	@RestResource(exported = false)
+	void clearRefereeById(@Param("refereeId") Long refereeId);
 }
