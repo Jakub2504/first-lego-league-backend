@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -102,8 +102,8 @@ class MatchScheduleValidationServiceTest {
 
 	private Match createMatch(String start, String end) {
 		Match match = new Match();
-		match.setStartTime(LocalTime.parse(start));
-		match.setEndTime(LocalTime.parse(end));
+		match.setStartTime(LocalDateTime.parse(start));
+		match.setEndTime(LocalDateTime.parse(end));
 		return match;
 	}
 }

@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
@@ -184,8 +184,8 @@ public class EditionCompetitionTableStepDefs {
 		Match match = new Match();
 		match.setRound(round);
 		match.setCompetitionTable(table);
-		match.setStartTime(LocalTime.parse(startTime));
-		match.setEndTime(LocalTime.parse(endTime));
+		match.setStartTime(LocalDateTime.parse(startTime));
+		match.setEndTime(LocalDateTime.parse(endTime));
 		match.setState(state);
 		matchRepository.save(match);
 	}

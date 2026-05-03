@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.fll.service.match;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +34,7 @@ public class MatchScheduleValidationService {
 		}
 	}
 
-	public void validateTimeRange(LocalTime startTime, LocalTime endTime) {
+	public void validateTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
 		if (startTime == null || endTime == null) {
 			throw new MatchScheduleException(
 					MatchScheduleErrorCode.INVALID_TIME_RANGE,
@@ -50,7 +50,7 @@ public class MatchScheduleValidationService {
 		}
 	}
 
-	public void validateNoTableOverlap(String tableId, LocalTime newStartTime, LocalTime newEndTime, Long currentMatchId) {
+	public void validateNoTableOverlap(String tableId, LocalDateTime newStartTime, LocalDateTime newEndTime, Long currentMatchId) {
 		List<Match> overlaps = matchRepository.findOverlappingMatchesByTable(
 				tableId,
 				newStartTime,

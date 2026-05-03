@@ -2,8 +2,7 @@ package cat.udl.eps.softarch.fll.steps.match;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.time.LocalTime;
-
+import java.time.LocalDateTime;
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.json.JSONObject;
@@ -48,8 +47,8 @@ public class MatchTableAssignmentStepDefs {
 	@Given("a scheduled match without table exists from {string} to {string}")
 	public void createScheduledMatchWithoutTable(String startTime, String endTime) {
 		Match match = new Match();
-		match.setStartTime(LocalTime.parse(startTime));
-		match.setEndTime(LocalTime.parse(endTime));
+		match.setStartTime(LocalDateTime.parse(startTime));
+		match.setEndTime(LocalDateTime.parse(endTime));
 		currentMatch = matchRepository.save(match);
 	}
 
@@ -77,8 +76,8 @@ public class MatchTableAssignmentStepDefs {
 			boolean setAsCurrent) {
 		CompetitionTable table = competitionTableRepository.findById(tableIdentifier).orElseThrow();
 		Match match = new Match();
-		match.setStartTime(LocalTime.parse(startTime));
-		match.setEndTime(LocalTime.parse(endTime));
+		match.setStartTime(LocalDateTime.parse(startTime));
+		match.setEndTime(LocalDateTime.parse(endTime));
 		match.setCompetitionTable(table);
 		Match saved = matchRepository.save(match);
 		if (setAsCurrent) {

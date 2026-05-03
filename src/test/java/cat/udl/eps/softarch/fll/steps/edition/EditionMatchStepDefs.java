@@ -4,7 +4,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -105,8 +105,8 @@ public class EditionMatchStepDefs {
 		round = roundRepository.save(round);
 
 		Match match1 = new Match();
-		match1.setStartTime(LocalTime.of(10, 0));
-		match1.setEndTime(LocalTime.of(10, 30));
+		match1.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		match1.setEndTime(LocalDateTime.of(2026, 5, 3, 10, 30));
 		match1.setTeamA(teamA);
 		match1.setTeamB(teamB);
 		match1.setCompetitionTable(table);
@@ -114,8 +114,8 @@ public class EditionMatchStepDefs {
 		matchRepository.save(match1);
 
 		Match match2 = new Match();
-		match2.setStartTime(LocalTime.of(11, 0));
-		match2.setEndTime(LocalTime.of(11, 30));
+		match2.setStartTime(LocalDateTime.of(2026, 5, 3, 11, 0));
+		match2.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 30));
 		match2.setTeamA(teamA);
 		match2.setCompetitionTable(table);
 		match2.setRound(round);
@@ -152,8 +152,8 @@ public class EditionMatchStepDefs {
 		round = roundRepository.save(round);
 
 		Match match = new Match();
-		match.setStartTime(LocalTime.of(14, 0));
-		match.setEndTime(LocalTime.of(14, 30));
+		match.setStartTime(LocalDateTime.of(2026, 5, 3, 14, 0));
+		match.setEndTime(LocalDateTime.of(2026, 5, 3, 14, 30));
 		match.setTeamA(teamA);
 		match.setTeamB(teamB);
 		match.setCompetitionTable(table);

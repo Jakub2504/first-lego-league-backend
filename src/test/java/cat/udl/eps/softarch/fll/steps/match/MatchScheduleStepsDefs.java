@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
@@ -48,8 +48,8 @@ public class MatchScheduleStepsDefs {
 		CompetitionTable table = entityManager.find(CompetitionTable.class, tableId);
 		Match match = new Match();
 		match.setCompetitionTable(table);
-		match.setStartTime(LocalTime.parse(startTime));
-		match.setEndTime(LocalTime.parse(endTime));
+		match.setStartTime(LocalDateTime.parse(startTime));
+		match.setEndTime(LocalDateTime.parse(endTime));
 		matchRepository.save(match);
 	}
 

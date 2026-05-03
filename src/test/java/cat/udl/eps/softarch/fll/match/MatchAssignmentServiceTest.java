@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -154,12 +154,12 @@ class MatchAssignmentServiceTest {
 		Round round = buildRound(3L);
 		Match matchA = buildMatch(10L, MatchState.SCHEDULED, null);
 		matchA.setRound(round);
-		matchA.setStartTime(LocalTime.of(10, 0));
-		matchA.setEndTime(LocalTime.of(11, 0));
+		matchA.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		matchA.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
 		Match matchB = buildMatch(11L, MatchState.SCHEDULED, null);
 		matchB.setRound(round);
-		matchB.setStartTime(LocalTime.of(11, 0));
-		matchB.setEndTime(LocalTime.of(12, 0));
+		matchB.setStartTime(LocalDateTime.of(2026, 5, 3, 11, 0));
+		matchB.setEndTime(LocalDateTime.of(2026, 5, 3, 12, 0));
 		Referee refereeA = buildReferee(20L);
 		Referee refereeB = buildReferee(21L);
 
@@ -191,12 +191,12 @@ class MatchAssignmentServiceTest {
 		Round round = buildRound(3L);
 		Match matchA = buildMatch(10L, MatchState.SCHEDULED, null);
 		matchA.setRound(round);
-		matchA.setStartTime(LocalTime.of(10, 0));
-		matchA.setEndTime(LocalTime.of(11, 0));
+		matchA.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		matchA.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
 		Match matchB = buildMatch(11L, MatchState.SCHEDULED, null);
 		matchB.setRound(round);
-		matchB.setStartTime(LocalTime.of(10, 30));
-		matchB.setEndTime(LocalTime.of(11, 30));
+		matchB.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 30));
+		matchB.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 30));
 		Referee referee = buildReferee(20L);
 
 		when(roundRepository.findById(3L)).thenReturn(Optional.of(round));
@@ -299,8 +299,8 @@ class MatchAssignmentServiceTest {
 	private Match buildMatch(Long id, MatchState state, Referee referee) {
 		Match match = new Match();
 		match.setId(id);
-		match.setStartTime(LocalTime.of(10, 0));
-		match.setEndTime(LocalTime.of(11, 0));
+		match.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
+		match.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
 		match.setState(state);
 		match.setReferee(referee);
 		return match;

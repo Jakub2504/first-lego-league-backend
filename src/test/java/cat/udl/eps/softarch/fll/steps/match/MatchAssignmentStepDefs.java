@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -240,8 +240,8 @@ public class MatchAssignmentStepDefs {
 	private Match createMatch(MatchState state, String startTime, String endTime, Referee referee, Round round) {
 		Match match = new Match();
 		match.setState(state);
-		match.setStartTime(LocalTime.parse(startTime));
-		match.setEndTime(LocalTime.parse(endTime));
+		match.setStartTime(LocalDateTime.parse(startTime));
+		match.setEndTime(LocalDateTime.parse(endTime));
 		match.setReferee(referee);
 		match.setRound(round);
 		return matchRepository.save(match);

@@ -1,7 +1,7 @@
 package cat.udl.eps.softarch.fll.dto;
 
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,10 +13,10 @@ public class MatchSearchItemResponse {
 	private String matchId;
 
 	@NotNull
-	private LocalTime startTime;
+	private LocalDateTime startTime;
 
 	@NotNull
-	private LocalTime endTime;
+	private LocalDateTime endTime;
 
 	@NotBlank
 	private String tableId;

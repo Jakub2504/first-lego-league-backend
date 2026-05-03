@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import cat.udl.eps.softarch.fll.service.match.MatchTableAssignmentService;
@@ -112,7 +112,7 @@ class MatchTableAssignmentServiceTest {
 	void assignTableFailsWhenMatchMissingStartTime() {
 		Match match = new Match();
 		match.setId(10L);
-		match.setEndTime(LocalTime.parse("11:20"));
+		match.setEndTime(LocalDateTime.parse("11:20"));
 		CompetitionTable table = buildTable("Table-1");
 		when(matchRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(match));
 		when(competitionTableRepository.findByIdForUpdate("Table-1")).thenReturn(Optional.of(table));
@@ -127,7 +127,7 @@ class MatchTableAssignmentServiceTest {
 	void assignTableFailsWhenMatchMissingEndTime() {
 		Match match = new Match();
 		match.setId(10L);
-		match.setStartTime(LocalTime.parse("11:00"));
+		match.setStartTime(LocalDateTime.parse("11:00"));
 		CompetitionTable table = buildTable("Table-1");
 		when(matchRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(match));
 		when(competitionTableRepository.findByIdForUpdate("Table-1")).thenReturn(Optional.of(table));
@@ -154,8 +154,8 @@ class MatchTableAssignmentServiceTest {
 	private Match buildMatch(Long id, String tableId, String startTime, String endTime) {
 		Match match = new Match();
 		match.setId(id);
-		match.setStartTime(LocalTime.parse(startTime));
-		match.setEndTime(LocalTime.parse(endTime));
+		match.setStartTime(LocalDateTime.parse(startTime));
+		match.setEndTime(LocalDateTime.parse(endTime));
 		if (tableId != null) {
 			match.setCompetitionTable(buildTable(tableId));
 		}
