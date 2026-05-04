@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
@@ -175,8 +174,8 @@ public class MatchSearchStepDefs {
 		currentRoundId = round.getId();
 
 		Match match = new Match();
-		match.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
-		match.setEndTime(LocalDateTime.of(2026, 5, 3, 10, 30));
+		match.setStartTime(java.time.LocalDate.now().atTime(10, 0));
+		match.setEndTime(java.time.LocalDate.now().atTime(10, 30));
 		match.setTeamA(team);
 		match.setCompetitionTable(table);
 		match.setRound(round);
