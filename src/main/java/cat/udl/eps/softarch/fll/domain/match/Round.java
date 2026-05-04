@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rounds")
+@Table(
+	name = "rounds",
+	uniqueConstraints = @UniqueConstraint(columnNames = {"edition_id", "number"})
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,7 +38,7 @@ public class Round extends UriEntity<Long> {
 	@EqualsAndHashCode.Include
 	private Long id;
 
-	@Column(unique = true)
+	@Column
 	private int number;
 
 	@ManyToOne(fetch = FetchType.LAZY)
