@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
@@ -70,14 +69,14 @@ public class MatchSearchStepDefs {
 		currentRoundId = round.getId();
 
 		Match match1 = new Match();
-		match1.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
-		match1.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
+		match1.setStartTime(java.time.LocalDate.now().atTime(10, 0));
+		match1.setEndTime(java.time.LocalDate.now().atTime(11, 0));
 		match1.setCompetitionTable(table);
 		match1.setRound(round);
 
 		Match match2 = new Match();
-		match2.setStartTime(LocalDateTime.of(2026, 5, 3, 11, 15));
-		match2.setEndTime(LocalDateTime.of(2026, 5, 3, 12, 0));
+		match2.setStartTime(java.time.LocalDate.now().atTime(11, 15));
+		match2.setEndTime(java.time.LocalDate.now().atTime(12, 0));
 		match2.setCompetitionTable(table);
 		match2.setRound(round);
 
@@ -171,8 +170,8 @@ public class MatchSearchStepDefs {
 		currentRoundId = round.getId();
 
 		Match match = new Match();
-		match.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
-		match.setEndTime(LocalDateTime.of(2026, 5, 3, 10, 30));
+		match.setStartTime(java.time.LocalDate.now().atTime(10, 0));
+		match.setEndTime(java.time.LocalDate.now().atTime(10, 30));
 		match.setTeamA(team);
 		match.setCompetitionTable(table);
 		match.setRound(round);
