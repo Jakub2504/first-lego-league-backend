@@ -32,6 +32,7 @@ public class MatchSearchStepDefs {
 	private TeamRepository teamRepository;
 
 	private Long currentRoundId;
+	private LocalDate matchDate;
 
 	public MatchSearchStepDefs(StepDefs stepDefs, MatchRepository matchRepository, RoundRepository roundRepository, CompetitionTableRepository tableRepository, TeamRepository teamRepository) {
 		this.stepDefs = stepDefs;
@@ -60,6 +61,7 @@ public class MatchSearchStepDefs {
 
 	@Given("the database contains matches for search")
 	public void theDatabaseContainsMatchesForSearch() {
+		matchDate = LocalDate.of(2026, 5, 3);
 
 		CompetitionTable table = new CompetitionTable();
 		table.setId("Table-01");
@@ -70,14 +72,14 @@ public class MatchSearchStepDefs {
 		currentRoundId = round.getId();
 
 		Match match1 = new Match();
-		match1.setStartTime(LocalDateTime.of(2026, 5, 3, 10, 0));
-		match1.setEndTime(LocalDateTime.of(2026, 5, 3, 11, 0));
+		match1.setStartTime(LocalDateTime.of(matchDate, java.time.LocalTime.of(10, 0)));
+		match1.setEndTime(LocalDateTime.of(matchDate, java.time.LocalTime.of(11, 0)));
 		match1.setCompetitionTable(table);
 		match1.setRound(round);
 
 		Match match2 = new Match();
-		match2.setStartTime(LocalDateTime.of(2026, 5, 3, 11, 15));
-		match2.setEndTime(LocalDateTime.of(2026, 5, 3, 12, 0));
+		match2.setStartTime(LocalDateTime.of(matchDate, java.time.LocalTime.of(11, 15)));
+		match2.setEndTime(LocalDateTime.of(matchDate, java.time.LocalTime.of(12, 0)));
 		match2.setCompetitionTable(table);
 		match2.setRound(round);
 
@@ -108,12 +110,13 @@ public class MatchSearchStepDefs {
 
 	@When("I search matches between {string} and {string}")
 	public void i_search_matches_between_and(String startTime, String endTime) throws Exception {
-		String today = java.time.LocalDate.now().toString();
+		LocalDate date = matchDate != null ? matchDate : LocalDate.now();
+		String day = date.toString();
 
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get("/matches/filter")
-						.param("startTime", today + "T" + startTime)
-						.param("endTime", today + "T" + endTime)
+						.param("startTime", day + "T" + startTime)
+						.param("endTime", day + "T" + endTime)
 						.with(user("admin"))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
@@ -122,11 +125,12 @@ public class MatchSearchStepDefs {
 
 	@When("I search matches with table {string} between {string} and {string}")
 	public void iSearchMatchesWithTableBetween(String tableId, String startTime, String endTime) throws Exception {
+		LocalDate date = matchDate != null ? matchDate : LocalDate.now();
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get("/matches/filter")
 						.param("tableId", tableId)
-						.param("startTime", LocalDate.now() + "T" + startTime)
-						.param("endTime", LocalDate.now() + "T" + endTime)
+						.param("startTime", date + "T" + startTime)
+						.param("endTime", date + "T" + endTime)
 						.with(user("admin"))
 						.contentType(MediaType.APPLICATION_JSON));
 	}
