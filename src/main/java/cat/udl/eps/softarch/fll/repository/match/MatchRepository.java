@@ -107,4 +107,7 @@ public interface MatchRepository extends
 	@Query("UPDATE Match m SET m.referee = null WHERE m.referee.id = :refereeId")
 	@RestResource(exported = false)
 	void clearRefereeById(@Param("refereeId") Long refereeId);
+
+	@RestResource(exported = false)
+	List<Match> findByCompetitionTableId(String tableId);
 }
