@@ -32,3 +32,9 @@
 		When I change match with id 99999 state to "IN_PROGRESS"
 		Then The response code is 404
 		And The response has error "MATCH_NOT_FOUND"
+
+	Scenario: Non-admin non-referee authenticated user cannot transition match state
+		Given There is a registered user with username "coach", password "password", email "coach@test.com" and roles "ROLE_USER"
+		And I login as "coach" with password "password"
+		When I change the match state to "IN_PROGRESS"
+		Then The response code is 403
