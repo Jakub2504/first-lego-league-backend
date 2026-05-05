@@ -5,7 +5,6 @@ import cat.udl.eps.softarch.fll.controller.dto.ApiErrorResponse;
 import cat.udl.eps.softarch.fll.domain.match.MatchState;
 import cat.udl.eps.softarch.fll.exception.MatchLifecycleException;
 import cat.udl.eps.softarch.fll.service.match.MatchLifecycleService;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
